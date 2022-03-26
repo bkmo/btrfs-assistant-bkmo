@@ -7,6 +7,11 @@
 
 Btrfs::Btrfs(QObject *parent) : QObject{parent} { reloadVolumes(); }
 
+/**
+ * @brief Return Btrfs data for a particular UUID.
+ * @param uuid
+ * @return BtrfsMeta
+ */
 const BtrfsMeta Btrfs::btrfsVolume(const QString &uuid) const {
     // If the uuid isn't found return a default constructed btrfsMeta
     if (!m_volumes.contains(uuid)) {
@@ -16,6 +21,12 @@ const BtrfsMeta Btrfs::btrfsVolume(const QString &uuid) const {
     return m_volumes[uuid];
 }
 
+/**
+ * @brief Returns list of children Btrfs subvolumes for a given subvolume.
+ * @param subvolId
+ * @param uuid
+ * @return QStringList<BtrfsMeta>
+ */
 const QStringList Btrfs::children(const int subvolId, const QString &uuid) const {
     QStringList children;
     if (m_volumes.contains(uuid) && m_volumes[uuid].subvolumes.contains(subvolId)) {
@@ -30,6 +41,12 @@ const QStringList Btrfs::children(const int subvolId, const QString &uuid) const
     return children;
 }
 
+/**
+ * @brief Delete a subvolume from a btrfs device.
+ * @param uuid
+ * @param subvolid
+ * @return bool
+ */
 const bool Btrfs::deleteSubvol(const QString &uuid, const int subvolid) {
     Subvolume subvol;
     if (m_volumes.contains(uuid)) {
@@ -51,17 +68,32 @@ const bool Btrfs::deleteSubvol(const QString &uuid, const int subvolid) {
     return false;
 }
 
+/**
+ * @brief Checks whether a given subvolume is a snapper snapshot.
+ * @param subvolume
+ * @return bool
+ */
 bool Btrfs::isSnapper(const QString &subvolume) {
     static QRegularExpression re("\\/[0-9]*\\/snapshot$");
     return re.match(subvolume).hasMatch();
 }
 
+/**
+ * @brief Checks if a given subvolume is mounted.
+ * @param uuid
+ * @param subvolid
+ * @return bool
+ */
 bool Btrfs::isMounted(const QString &uuid, const int subvolid) {
     const QStringList outputList =
         System::runCmd("findmnt -nO subvolid=" + QString::number(subvolid) + " -o uuid", false).output.trimmed().split("\n");
     return uuid == outputList.at(0).trimmed();
 }
 
+/**
+ * @brief Returns the root subvolume for currently mounted device.
+ * @return
+ */
 const QString Btrfs::findRootSubvol() {
     const Result findmntResult = System::runCmd("LANG=C findmnt -no uuid,options /", false);
     if (findmntResult.exitCode != 0 || findmntResult.output.isEmpty())
@@ -87,6 +119,10 @@ const QString Btrfs::findRootSubvol() {
     return subvol;
 }
 
+/**
+ * @brief Return list of found btrfs devices
+ * @return
+ */
 const QStringList Btrfs::listFilesystems() {
     const QStringList outputList = System::runCmd("btrfs filesystem show -m", false).output.split('\n');
     QStringList uuids;
@@ -98,9 +134,14 @@ const QStringList Btrfs::listFilesystems() {
     return uuids;
 }
 
+/**
+ * @brief Return list of btrfs mountpoints
+ * @return
+ */
 const QStringList Btrfs::listMountpoints() {
     QStringList mountpoints;
 
+    // loop through mountpoints and only include those with btrfs fileystem
     const QStringList output = System::runCmd("findmnt --real -lno fstype,target", false).output.trimmed().split('\n');
     for (const QString &line : output) {
         if (line.startsWith("btrfs")) {
@@ -118,6 +159,11 @@ const QStringList Btrfs::listMountpoints() {
     return mountpoints;
 }
 
+/**
+ * @brief Return subvolume map for a given btrfs device.
+ * @param uuid
+ * @return
+ */
 const QMap<int, Subvolume> Btrfs::listSubvolumes(const QString &uuid) const {
     // If the uuid isn't found return a default constructed QMap
     if (!m_volumes.contains(uuid)) {
@@ -127,6 +173,11 @@ const QMap<int, Subvolume> Btrfs::listSubvolumes(const QString &uuid) const {
     return m_volumes[uuid].subvolumes;
 }
 
+/**
+ * @brief Mount the root subvolume, if not already mounted.
+ * @param uuid
+ * @return
+ */
 const QString Btrfs::mountRoot(const QString &uuid) {
     // Check to see if it is already mounted
     QStringList findmntOutput = System::runCmd("findmnt -nO subvolid=5 -o uuid,target", false).output.split('\n');
@@ -152,6 +203,10 @@ const QString Btrfs::mountRoot(const QString &uuid) {
     return mountpoint;
 }
 
+/**
+ * @brief Reloads subvolumes for a given btrfs device.
+ * @param uuid
+ */
 void Btrfs::reloadSubvols(const QString &uuid) {
     // First make sure the data we are trying to reload exists
     if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
@@ -183,6 +238,9 @@ void Btrfs::reloadSubvols(const QString &uuid) {
     m_volumes[uuid].subvolumes = subvols;
 }
 
+/**
+ * @brief Reloads data and subvolumes for all detected btrfs devices.
+ */
 void Btrfs::reloadVolumes() {
     m_volumes.clear();
 
@@ -222,6 +280,12 @@ void Btrfs::reloadVolumes() {
     }
 }
 
+/**
+ * @brief Renames a btrfs subvolume.
+ * @param source
+ * @param target
+ * @return
+ */
 bool Btrfs::renameSubvolume(const QString &source, const QString &target) {
     QDir dir;
     // If there is an empty dir at target, remove it
@@ -231,6 +295,13 @@ bool Btrfs::renameSubvolume(const QString &source, const QString &target) {
     return dir.rename(source, target);
 }
 
+/**
+ * @brief Restores snapshot to a given btrfs device subvolume.
+ * @param uuid
+ * @param sourceId
+ * @param targetId
+ * @return
+ */
 const RestoreResult Btrfs::restoreSubvol(const QString &uuid, const int sourceId, const int targetId) const {
     RestoreResult restoreResult;
 
@@ -295,6 +366,12 @@ const RestoreResult Btrfs::restoreSubvol(const QString &uuid, const int sourceId
     return restoreResult;
 }
 
+/**
+ * @brief Return the subvolume id for a given subolume name on a device.
+ * @param uuid
+ * @param subvolName
+ * @return
+ */
 const int Btrfs::subvolId(const QString &uuid, const QString &subvolName) const {
     if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
         return 0;
@@ -311,6 +388,12 @@ const int Btrfs::subvolId(const QString &uuid, const QString &subvolName) const 
     return subvolId;
 }
 
+/**
+ * @brief Return the subvolume name for a given subvolume id on a device.
+ * @param uuid
+ * @param subvolId
+ * @return
+ */
 const QString Btrfs::subvolName(const QString &uuid, const int subvolId) const {
     if (m_volumes.contains(uuid) && m_volumes[uuid].subvolumes.contains(subvolId)) {
         return m_volumes[uuid].subvolumes[subvolId].subvolName;
@@ -319,6 +402,12 @@ const QString Btrfs::subvolName(const QString &uuid, const int subvolId) const {
     }
 }
 
+/**
+ * @brief Return the top parent subvolume for a given subvolume on a device.
+ * @param uuid
+ * @param subvolId
+ * @return
+ */
 const int Btrfs::subvolTopParent(const QString &uuid, const int subvolId) const {
     int parentId = subvolId;
     if (m_volumes.contains(uuid) && m_volumes[uuid].subvolumes.contains(subvolId)) {
