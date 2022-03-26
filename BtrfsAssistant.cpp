@@ -43,6 +43,13 @@ static const QString toHumanReadable(double number) {
     return QString::number(number) + " " + units[i];
 }
 
+/**
+ * @brief Constructor that initializes application with various services and ensures application running as root.
+ * @param btrfsMaintenance
+ * @param btrfs
+ * @param snapper
+ * @param parent
+ */
 BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs, Snapper *snapper, QWidget *parent)
     : QMainWindow(parent), m_ui(new Ui::BtrfsAssistant) {
     m_ui->setupUi(this);
@@ -65,7 +72,10 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
 
 BtrfsAssistant::~BtrfsAssistant() { delete m_ui; }
 
-// Puts the snapper tab in restore mode
+/**
+ * @brief Toggle the UI elements in Snapper tab depending on restore mode checkbox state.
+ * @param enable
+ */
 void BtrfsAssistant::enableRestoreMode(bool enable) {
     m_ui->pushButton_snapper_create->setEnabled(!enable);
     m_ui->pushButton_snapper_delete->setEnabled(!enable);
@@ -73,8 +83,6 @@ void BtrfsAssistant::enableRestoreMode(bool enable) {
 
     if (enable) {
         m_ui->label_snapper_combo->setText(tr("Select Subvolume:"));
-        m_ui->comboBox_snapper_configs->clear();
-        m_ui->tableWidget_snapper->clear();
         loadSnapperRestoreMode();
         populateSnapperGrid();
     } else {
@@ -84,7 +92,9 @@ void BtrfsAssistant::enableRestoreMode(bool enable) {
     }
 }
 
-// Populates the UI for the restore mode of the snapper tab
+/**
+ * @brief Load snapper subvolumes into combobox on snapper tab.
+ */
 void BtrfsAssistant::loadSnapperRestoreMode() {
     // Sanity check
     if (!m_ui->checkBox_snapper_restore->isChecked()) {
@@ -94,11 +104,16 @@ void BtrfsAssistant::loadSnapperRestoreMode() {
     // Clear the existing info
     m_ui->comboBox_snapper_configs->clear();
 
+    // Load snapper subvolumes into combobox.
     const QStringList configs = m_snapper->subvolKeys();
     for (const QString &config : configs) {
         m_ui->comboBox_snapper_configs->addItem(config);
     }
 }
+
+/**
+ * @brief Checks if snapper is installed and load snapper UI elements.
+ */
 void BtrfsAssistant::loadSnapperUI() {
     // If snapper isn't installed, no need to continue
     if (!m_hasSnapper)
@@ -115,6 +130,9 @@ void BtrfsAssistant::loadSnapperUI() {
     }
 }
 
+/**
+ * @brief Sets up Btrfs Maintenance tab
+ */
 void BtrfsAssistant::populateBmTab() {
     m_ui->comboBox_bmBalanceFreq->clear();
     m_ui->comboBox_bmBalanceFreq->insertItems(0, m_bmFreqValues);
@@ -172,10 +190,15 @@ void BtrfsAssistant::populateBmTab() {
     }
 }
 
+/**
+ * @brief Populate the Btrfs tab with the selected device's information.
+ * @param uuid
+ */
 void BtrfsAssistant::populateBtrfsUi(const QString &uuid) {
 
     BtrfsMeta btrfsVolume = m_btrfs->btrfsVolume(uuid);
 
+    // Dont proceed when no Btrfs data found for UUID.
     if (!btrfsVolume.populated) {
         return;
     }
@@ -201,21 +224,24 @@ void BtrfsAssistant::populateBtrfsUi(const QString &uuid) {
     }
 }
 
-// Populates a selected config on the Snapper Settings tab
+/**
+ * @brief Populates a selected config on the Snapper Settings tab
+ */
 void BtrfsAssistant::populateSnapperConfigSettings() {
     QString name = m_ui->comboBox_snapper_config_settings->currentText();
     if (name.isEmpty()) {
         return;
     }
 
+    // Retrieve settings for selected config
     const QMap<QString, QString> config = m_snapper->config(name);
 
     if (config.isEmpty()) {
         return;
     }
 
+    // Populate UI elements with the values from the snapper config settings.
     m_ui->label_snapper_config_name->setText(name);
-
     const QStringList keys = config.keys();
     for (const QString &key : keys) {
         if (key == "SUBVOLUME") {
@@ -240,7 +266,9 @@ void BtrfsAssistant::populateSnapperConfigSettings() {
     snapperTimelineEnable(m_ui->checkBox_snapper_enabletimeline->isChecked());
 }
 
-// Populates the main grid on the Snapper tab
+/**
+ * @brief Populates the main grid on the Snapper tab
+ */
 void BtrfsAssistant::populateSnapperGrid() {
     if (m_ui->checkBox_snapper_restore->isChecked()) {
         QString config = m_ui->comboBox_snapper_configs->currentText();
@@ -304,20 +332,30 @@ void BtrfsAssistant::populateSnapperGrid() {
     m_ui->tableWidget_snapper->sortItems(0, Qt::DescendingOrder);
 }
 
+/**
+ * @brief Refresh the Btrfs tab UI.
+ */
 void BtrfsAssistant::refreshBtrfsUi() {
+
+    // Repopulate device selection combo box with detected btrfs filesystems.
     m_ui->comboBox_btrfsdevice->clear();
     const QStringList uuidList = Btrfs::listFilesystems();
     for (const QString &uuid : uuidList) {
         m_ui->comboBox_btrfsdevice->addItem(uuid);
     }
+
+    // Repopulate data using the first detected btrfs filesystem.
     populateBtrfsUi(m_ui->comboBox_btrfsdevice->currentText());
     refreshSubvolListUi(m_ui->comboBox_btrfsdevice->currentText());
 }
 
+/**
+ * @brief Update the UI on Snapper Settings based on systems enabled units.
+ */
 void BtrfsAssistant::refreshSnapperServices() {
     const auto enabledUnits = System::findEnabledUnits();
 
-    // Loop through the checkboxes
+    // Loop through the checkboxes and change state to match
     const QList<QCheckBox *> checkboxes =
         m_ui->scrollArea_bm->findChildren<QCheckBox *>() + m_ui->groupBox_snapperUnits->findChildren<QCheckBox *>();
     for (QCheckBox *checkbox : checkboxes) {
@@ -327,8 +365,12 @@ void BtrfsAssistant::refreshSnapperServices() {
     }
 }
 
-// Populates the UI for the BTRFS details tab
+/**
+ * @brief Populates the Btrfs Subvolumes tab with the selected devices information.
+ * @param uuid
+ */
 void BtrfsAssistant::refreshSubvolListUi(const QString &uuid) {
+    // Reload the subvolumes list
     m_ui->listWidget_subvols->clear();
     m_btrfs->reloadSubvols(uuid);
 
@@ -336,14 +378,21 @@ void BtrfsAssistant::refreshSubvolListUi(const QString &uuid) {
 
     bool includeSnaps = m_ui->checkBox_includesnapshots->isChecked();
 
+    // Populate list with discovered subvolumes
     while (i.hasNext()) {
         i.next();
+        // Include snapshots in list if option checked
         if (includeSnaps || !(Btrfs::isTimeshift(i.value().subvolName) || Btrfs::isSnapper(i.value().subvolName)))
             m_ui->listWidget_subvols->addItem(i.value().subvolName);
     }
     m_ui->listWidget_subvols->sortItems();
 }
 
+/**
+ * @brief Restore a selected snapshot to the selected subvolume.
+ * @param uuid
+ * @param subvolume
+ */
 void BtrfsAssistant::restoreSnapshot(const QString &uuid, const QString &subvolume) {
     if (!Btrfs::isSnapper(subvolume)) {
         displayError(tr("This is not a snapshot that can be restored by this application"));
@@ -388,6 +437,10 @@ void BtrfsAssistant::restoreSnapshot(const QString &uuid, const QString &subvolu
     }
 }
 
+/**
+ * @brief Initial application setup.
+ * @return
+ */
 bool BtrfsAssistant::setup() {
 
     // If snapper isn't installed, hide the snapper-related elements of the UI
@@ -410,6 +463,7 @@ bool BtrfsAssistant::setup() {
     populateSnapperConfigSettings();
     m_ui->pushButton_restore_snapshot->setEnabled(false);
 
+    // Populate or hide btrfs maintenance tab depending on if system has btrfs maintenance units
     if (m_hasBtrfsmaintenance) {
         populateBmTab();
     } else {
@@ -420,7 +474,10 @@ bool BtrfsAssistant::setup() {
     return true;
 }
 
-// Enables or disables the timeline spinboxes to match the timeline checkbox
+/**
+ * @brief Enables or disables the timeline spinboxes to match the timeline checkbox
+ * @param enable
+ */
 void BtrfsAssistant::snapperTimelineEnable(bool enable) {
     m_ui->spinBox_snapper_hourly->setEnabled(enable);
     m_ui->spinBox_snapper_daily->setEnabled(enable);
@@ -429,6 +486,10 @@ void BtrfsAssistant::snapperTimelineEnable(bool enable) {
     m_ui->spinBox_snapper_yearly->setEnabled(enable);
 }
 
+/**
+ * @brief Update system service states depending on checkbox states in UI.
+ * @param checkboxList
+ */
 void BtrfsAssistant::updateServices(QList<QCheckBox *> checkboxList) {
     QStringList enabledUnits = System::findEnabledUnits();
 
@@ -444,16 +505,39 @@ void BtrfsAssistant::updateServices(QList<QCheckBox *> checkboxList) {
     }
 }
 
+/**
+ * @brief Toggle balance list selection depending on if all checkbox state.
+ * @param checked
+ */
 void BtrfsAssistant::on_checkBox_bmBalance_clicked(bool checked) { m_ui->listWidget_bmBalance->setDisabled(checked); }
 
-void BtrfsAssistant::on_checkBox_bmDefrag_clicked(bool checked) { m_ui->listWidget_bmDefrag->setDisabled(checked); }
-
+/**
+ * @brief Toggle scrub list selection depending on if all checkbox state.
+ * @param checked
+ */
 void BtrfsAssistant::on_checkBox_bmScrub_clicked(bool checked) { m_ui->listWidget_bmScrub->setDisabled(checked); }
 
+/**
+ * @brief Toggle defrag list selection depending on if all checkbox state.
+ * @param checked
+ */
+void BtrfsAssistant::on_checkBox_bmDefrag_clicked(bool checked) { m_ui->listWidget_bmDefrag->setDisabled(checked); }
+
+/**
+ * @brief Refresh subvolume list when toggling include snapshots checkbox state.
+ */
 void BtrfsAssistant::on_checkBox_includesnapshots_clicked() { refreshSubvolListUi(m_ui->comboBox_btrfsdevice->currentText()); }
 
+/**
+ * @brief Toggle timeline snapshot inputs based on enable timeline snapshots checkbox state.
+ * @param checked
+ */
 void BtrfsAssistant::on_checkBox_snapper_enabletimeline_clicked(bool checked) { snapperTimelineEnable(checked); }
 
+/**
+ * @brief Update Snapper tab UI depending on restore mode checkbox state.
+ * @param checked
+ */
 void BtrfsAssistant::on_checkBox_snapper_restore_clicked(bool checked) {
     enableRestoreMode(checked);
 
@@ -470,19 +554,26 @@ void BtrfsAssistant::on_comboBox_btrfsdevice_activated(int) {
     m_ui->comboBox_btrfsdevice->clearFocus();
 }
 
-// When a new config is selected repopulate the UI
+/**
+ * @brief When a new config is selected repopulate the UI
+ */
 void BtrfsAssistant::on_comboBox_snapper_config_settings_activated(int) {
     populateSnapperConfigSettings();
 
     m_ui->comboBox_snapper_config_settings->clearFocus();
 }
 
-// Repopulate the grid when a different config is selected
+/**
+ * @brief Repopulate the grid when a different config is selected
+ */
 void BtrfsAssistant::on_comboBox_snapper_configs_activated(int) {
     populateSnapperGrid();
     m_ui->comboBox_snapper_configs->clearFocus();
 }
 
+/**
+ * @brief Apply btrfs maintenance system settings based on the UI state.
+ */
 void BtrfsAssistant::on_pushButton_bmApply_clicked() {
 
     // First, update the services per the checkboxes
@@ -493,6 +584,7 @@ void BtrfsAssistant::on_pushButton_bmApply_clicked() {
     m_btrfsMaint->setValue("BTRFS_SCRUB_PERIOD", m_ui->comboBox_bmScrubFreq->currentText());
     m_btrfsMaint->setValue("BTRFS_DEFRAG_PERIOD", m_ui->comboBox_bmDefragFreq->currentText());
 
+    // Update balance settings
     if (m_ui->checkBox_bmBalance->isChecked()) {
         m_btrfsMaint->setValue("BTRFS_BALANCE_MOUNTPOINTS", "auto");
     } else {
@@ -504,6 +596,7 @@ void BtrfsAssistant::on_pushButton_bmApply_clicked() {
         m_btrfsMaint->setValue("BTRFS_BALANCE_MOUNTPOINTS", balancePaths.join(":"));
     }
 
+    // Update scrub settings
     if (m_ui->checkBox_bmScrub->isChecked()) {
         m_btrfsMaint->setValue("BTRFS_SCRUB_MOUNTPOINTS", "auto");
     } else {
@@ -515,6 +608,7 @@ void BtrfsAssistant::on_pushButton_bmApply_clicked() {
         m_btrfsMaint->setValue("BTRFS_SCRUB_MOUNTPOINTS", scrubPaths.join(":"));
     }
 
+    // Update defrag settings
     if (m_ui->checkBox_bmDefrag->isChecked()) {
         m_btrfsMaint->setValue("BTRFS_DEFRAG_PATHS", "auto");
     } else {
@@ -534,7 +628,9 @@ void BtrfsAssistant::on_pushButton_bmApply_clicked() {
     m_ui->pushButton_bmApply->clearFocus();
 }
 
-// Delete a subvolume after checking for a variety of errors
+/**
+ * @brief Delete a subvolume after checking for a variety of errors
+ */
 void BtrfsAssistant::on_pushButton_deletesubvol_clicked() {
     QString subvol = m_ui->listWidget_subvols->currentItem()->text();
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
@@ -586,6 +682,9 @@ void BtrfsAssistant::on_pushButton_deletesubvol_clicked() {
     m_ui->pushButton_deletesubvol->clearFocus();
 }
 
+/**
+ * @brief Refreshes Btrfs data button handler
+ */
 void BtrfsAssistant::on_pushButton_load_clicked() {
     m_btrfs->reloadVolumes();
     refreshBtrfsUi();
@@ -593,6 +692,9 @@ void BtrfsAssistant::on_pushButton_load_clicked() {
     m_ui->pushButton_load->clearFocus();
 }
 
+/**
+ * @brief Refreshes subvolume data button handler
+ */
 void BtrfsAssistant::on_pushButton_loadsubvol_clicked() {
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
 
@@ -606,6 +708,9 @@ void BtrfsAssistant::on_pushButton_loadsubvol_clicked() {
     m_ui->pushButton_loadsubvol->clearFocus();
 }
 
+/**
+ * @brief Restore snapshot button handler
+ */
 void BtrfsAssistant::on_pushButton_restore_snapshot_clicked() {
     // First lets double check to ensure we are in restore mode
     if (!m_ui->checkBox_snapper_restore->isChecked()) {
@@ -637,6 +742,9 @@ void BtrfsAssistant::on_pushButton_restore_snapshot_clicked() {
     m_ui->pushButton_restore_snapshot->clearFocus();
 }
 
+/**
+ * @brief Snapper new snapshot button handler
+ */
 void BtrfsAssistant::on_pushButton_snapper_create_clicked() {
     QString config = m_ui->comboBox_snapper_configs->currentText();
 
@@ -670,6 +778,9 @@ void BtrfsAssistant::on_pushButton_snapper_create_clicked() {
     m_ui->pushButton_snapper_create->clearFocus();
 }
 
+/**
+ * @brief Snapper delete snapshot button handler
+ */
 void BtrfsAssistant::on_pushButton_snapper_delete_clicked() {
     if (m_ui->tableWidget_snapper->currentRow() == -1) {
         displayError(tr("Nothing selected!"));
@@ -713,7 +824,9 @@ void BtrfsAssistant::on_pushButton_snapper_delete_clicked() {
     m_ui->pushButton_snapper_delete->clearFocus();
 }
 
-// Use snapper to delete a config when the delete config button is pressed
+/**
+ * @brief Use snapper to delete a config when the delete config button is pressed
+ */
 void BtrfsAssistant::on_pushButton_snapper_delete_config_clicked() {
     QString name = m_ui->comboBox_snapper_config_settings->currentText();
 
@@ -856,6 +969,9 @@ void BtrfsAssistant::on_pushButton_snapper_save_config_clicked() {
     m_ui->pushButton_snapper_save_config->clearFocus();
 }
 
+/**
+ * @brief Snapper Settings apply systemd changes button handler
+ */
 void BtrfsAssistant::on_pushButton_SnapperUnitsApply_clicked() {
 
     updateServices(m_ui->groupBox_snapperUnits->findChildren<QCheckBox *>());
