@@ -30,6 +30,11 @@ Snapper::Snapper(Btrfs *btrfs, QString snapperCommand, const QMap<QString, QStri
     load();
 }
 
+/**
+ * @brief Return the settings for a given snapper config.
+ * @param name
+ * @return
+ */
 const QMap<QString, QString> Snapper::config(const QString &name) {
     if (m_configs.contains(name)) {
         return m_configs[name];
@@ -38,6 +43,9 @@ const QMap<QString, QString> Snapper::config(const QString &name) {
     }
 }
 
+/**
+ * @brief
+ */
 void Snapper::createSubvolMap() {
     for (const QVector<SnapperSubvolume> &subvol : qAsConst(m_subvols)) {
         const QString snapshotSubvol = findSnapshotSubvolume(subvol.at(0).subvol);
