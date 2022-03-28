@@ -74,8 +74,6 @@ void BtrfsAssistant::enableRestoreMode(bool enable) {
 
     if (enable) {
         m_ui->label_snapper_combo->setText(tr("Select Subvolume:"));
-        m_ui->comboBox_snapper_configs->clear();
-        m_ui->tableWidget_snapper->clear();
         loadSnapperRestoreMode();
         populateSnapperGrid();
     } else {
