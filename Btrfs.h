@@ -161,6 +161,37 @@ class Btrfs : public QObject {
      */
     const int subvolTopParent(const QString &uuid, const int subvolId) const;
 
+    /**
+     * @brief Performs a balance operation on root subvolume for device.
+     * @param uuid
+     */
+    void startBalanceRoot(const QString &uuid);
+
+    /**
+     * @brief Stops a balance operation on root subvolume for device.
+     * @param uuid
+     */
+    void stopBalanceRoot(const QString &uuid);
+
+    /**
+     * @brief Checks the balance status of a given subvolume.
+     * @param mountpoint
+     * @return
+     */
+    const QString checkBalanceStatus(const QString &mountpoint) const;
+
+    /**
+     * @brief Performs a scrub operation on root subvolume for device.
+     * @param uuid
+     */
+    void startScrubRoot(const QString &uuid);
+
+    /**
+     * @brief Performs a defrag operation on root subvolume for device.
+     * @param uuid
+     */
+    void startDefragRoot(const QString &uuid);
+
   private:
     // A map of BtrfsMeta.  The key is UUID
     QMap<QString, BtrfsMeta> m_volumes;

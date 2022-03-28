@@ -6,6 +6,7 @@
 #include "System.h"
 
 #include <QDebug>
+#include <QTimer>
 
 /**
  * @brief A simple wrapper to QMessageBox for creating consistent error messages
@@ -64,8 +65,9 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
     this->setWindowTitle(QCoreApplication::applicationName());
 }
 
-BtrfsAssistant::~BtrfsAssistant() { delete m_ui; }
-
+BtrfsAssistant::~BtrfsAssistant() {
+    delete m_ui;
+}
 void BtrfsAssistant::enableRestoreMode(bool enable) {
     m_ui->pushButton_snapper_create->setEnabled(!enable);
     m_ui->pushButton_snapper_delete->setEnabled(!enable);
@@ -416,6 +418,12 @@ bool BtrfsAssistant::setup() {
     populateSnapperConfigSettings();
     m_ui->pushButton_restore_snapshot->setEnabled(false);
     m_ui->pushButton_snapperBrowse->setEnabled(false);
+
+    QString balanceStatus = m_btrfs->checkBalanceStatus("/");
+    m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
+    if (!balanceStatus.contains("No balance found")) {
+        m_ui->pushButton_btrfsBalance->setText("Stop");
+    }
 
     // Populate or hide btrfs maintenance tab depending on if system has btrfs maintenance units
     if (m_hasBtrfsmaintenance) {
@@ -884,4 +892,31 @@ void BtrfsAssistant::on_pushButton_SnapperUnitsApply_clicked() {
     QMessageBox::information(0, tr("Btrfs Assistant"), tr("Changes applied"));
 
     m_ui->pushButton_SnapperUnitsApply->clearFocus();
+}
+
+void BtrfsAssistant::on_pushButton_btrfsBalance_clicked(){
+    QString balanceStatus = m_btrfs->checkBalanceStatus("/");
+    m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
+    QTimer *timer = new QTimer(this);
+    QString uuid = m_ui->comboBox_btrfsdevice->currentText();
+    connect(timer, SIGNAL(timeout()), this, SLOT(m_ui->label_btrfsBalanceStatus->setText(m_btrfs->checkBalanceStatus("/"))));
+
+    // Stop or start balance depending on current operation
+    if (m_ui->pushButton_btrfsBalance->text().contains("Stop")) {
+        m_btrfs->stopBalanceRoot(uuid);
+        m_ui->pushButton_btrfsBalance->setText("Balance");
+        timer->stop();
+    } else {
+        m_btrfs->startBalanceRoot(uuid);
+        m_ui->pushButton_btrfsBalance->setText("Stop");
+        timer->start(1000);
+    }
+}
+
+void BtrfsAssistant::on_pushButton_btrfsScrub_clicked(){
+    // TODO:
+}
+
+void BtrfsAssistant::on_pushButton_btrfsDefrag_clicked(){
+    // TODO:
 }

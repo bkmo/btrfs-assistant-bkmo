@@ -269,3 +269,45 @@ const int Btrfs::subvolTopParent(const QString &uuid, const int subvolId) const 
 
     return parentId;
 }
+
+void Btrfs::startBalanceRoot(const QString &uuid) {
+    // First make sure the data we are trying to balance exists
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        reloadVolumes();
+    }
+
+    // If it still doesn't exist, we need to bail
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        qWarning() << tr("UUID " + uuid.toUtf8() + " not found!");
+        return;
+    }
+
+    QString mountpoint = mountRoot(uuid);
+
+    // run balance command against root
+    System::runCmd("btrfs balance start " + mountpoint + " --full-balance --bg", false);
+}
+
+void Btrfs::stopBalanceRoot(const QString &uuid) {
+    // First make sure the data we are trying to balance exists
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        reloadVolumes();
+    }
+
+    // If it still doesn't exist, we need to bail
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        qWarning() << tr("UUID " + uuid.toUtf8() + " not found!");
+        return;
+    }
+
+    QString mountpoint = mountRoot(uuid);
+
+    // run balance command against root
+    System::runCmd("btrfs balance cancel " + mountpoint, false);
+}
+
+
+const QString Btrfs::checkBalanceStatus(const QString &mountpoint) const{
+    // run balance command against root
+    return System::runCmd("btrfs balance status " + mountpoint, false).output;
+}

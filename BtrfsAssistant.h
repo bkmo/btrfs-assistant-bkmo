@@ -210,5 +210,17 @@ class BtrfsAssistant : public QMainWindow {
      * @brief Snapper Settings apply systemd changes button handler
      */
     void on_pushButton_SnapperUnitsApply_clicked();
+    /**
+     * @brief Btrfs balance button handler
+     */
+    void on_pushButton_btrfsBalance_clicked();
+    /**
+     * @brief Btrfs balance button handler
+     */
+    void on_pushButton_btrfsScrub_clicked();
+    /**
+     * @brief Btrfs balance button handler
+     */
+    void on_pushButton_btrfsDefrag_clicked();
 };
 #endif // BTRFSASSISTANT_H
