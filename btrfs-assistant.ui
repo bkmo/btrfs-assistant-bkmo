@@ -160,6 +160,9 @@
                </item>
                <item>
                 <widget class="QComboBox" name="comboBox_btrfsdevice">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UUID of Btrfs filesystems.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="editable">
                   <bool>false</bool>
                  </property>
@@ -189,6 +192,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_load">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rescan and load btrfs device data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="text">
                   <string>Refresh Btrfs Data</string>
                  </property>
@@ -225,6 +231,9 @@
                </item>
                <item row="1" column="1">
                 <widget class="QProgressBar" name="progressBar_btrfsmeta">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Utilization percentage of metadata chunks in the allocated space.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="value">
                   <number>0</number>
                  </property>
@@ -239,6 +248,9 @@
                </item>
                <item row="0" column="1">
                 <widget class="QProgressBar" name="progressBar_btrfsdata">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Utilization percentage of data chunks in the allocated space.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="value">
                   <number>0</number>
                  </property>
@@ -246,6 +258,9 @@
                </item>
                <item row="2" column="1">
                 <widget class="QProgressBar" name="progressBar_btrfssys">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Utilization percentage of system chunks in the allocated space.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
                  <property name="value">
                   <number>0</number>
                  </property>
@@ -280,6 +295,9 @@
        <layout class="QGridLayout" name="gridLayout_23">
         <item row="3" column="0">
          <widget class="QCheckBox" name="checkBox_includesnapshots">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Include children subvolumes of .snapshots and timeshift folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>Include Timeshift and Snapper Snapshots</string>
           </property>
@@ -300,7 +318,7 @@
            <item>
             <widget class="QPushButton" name="pushButton_loadsubvol">
              <property name="toolTip">
-              <string>Refresh list of subvolumes for selected device.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Refresh list of subvolumes for selected device.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Refresh Subvolumes</string>
@@ -323,7 +341,7 @@
            <item>
             <widget class="QPushButton" name="pushButton_deletesubvol">
              <property name="toolTip">
-              <string>Delete selected btrfs subvolume.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete selected btrfs subvolume.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Delete Selected</string>
@@ -362,6 +380,9 @@
            </item>
            <item>
             <widget class="QCheckBox" name="checkBox_snapper_restore">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle restore mode for snapper interface. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Restore Mode</string>
              </property>
@@ -383,7 +404,7 @@
            <item>
             <widget class="QToolButton" name="pushButton_snapper_create">
              <property name="toolTip">
-              <string>Create new snapshot for selected config.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create new snapshot for selected config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>New Snapshot</string>
@@ -400,7 +421,7 @@
            <item>
             <widget class="QToolButton" name="pushButton_snapper_delete">
              <property name="toolTip">
-              <string>Delete selected snapshot.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete selected snapshot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Delete Snapshot</string>
@@ -423,7 +444,7 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Browse files on selected snapshot.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Browse files on selected snapshot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Browse Snapshot</string>
@@ -440,7 +461,7 @@
            <item>
             <widget class="QToolButton" name="pushButton_restore_snapshot">
              <property name="toolTip">
-              <string>Restore selected snapshot over target subvolume.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore selected snapshot over target subvolume.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Restore Snapshot</string>
@@ -536,7 +557,7 @@
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_new_config">
                  <property name="toolTip">
-                  <string>Set up a new snapper config.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set up a new snapper config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>New Config</string>
@@ -546,7 +567,7 @@
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_delete_config">
                  <property name="toolTip">
-                  <string>Delete selected snapper config.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete selected snapper config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Delete Config</string>
@@ -569,7 +590,7 @@
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_save_config">
                  <property name="toolTip">
-                  <string>Save settings for current config.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save settings for current config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Save Config</string>
