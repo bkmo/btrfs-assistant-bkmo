@@ -369,7 +369,7 @@
            <item>
             <widget class="QCheckBox" name="checkBox_snapper_restore">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle restore mode UI.&lt;/p&gt;&lt;p&gt;Disables deleting and creating snapshots.&lt;/p&gt;&lt;p&gt;Enables browsing and restoring snapshots.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Restore Mode</string>
