@@ -160,9 +160,6 @@
                </item>
                <item>
                 <widget class="QComboBox" name="comboBox_btrfsdevice">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UUID of Btrfs filesystems.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
                  <property name="editable">
                   <bool>false</bool>
                  </property>
@@ -192,9 +189,6 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_load">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rescan and load btrfs device data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
                  <property name="text">
                   <string>Refresh Btrfs Data</string>
                  </property>
@@ -317,9 +311,6 @@
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
             <widget class="QPushButton" name="pushButton_loadsubvol">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Refresh list of subvolumes for selected device.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Refresh Subvolumes</string>
              </property>
@@ -340,9 +331,6 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_deletesubvol">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete selected btrfs subvolume.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Delete Selected</string>
              </property>
@@ -381,7 +369,7 @@
            <item>
             <widget class="QCheckBox" name="checkBox_snapper_restore">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle restore mode for snapper interface. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>Restore Mode</string>
@@ -403,9 +391,6 @@
            </item>
            <item>
             <widget class="QToolButton" name="pushButton_snapper_create">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create new snapshot for selected config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>New Snapshot</string>
              </property>
@@ -420,9 +405,6 @@
            </item>
            <item>
             <widget class="QToolButton" name="pushButton_snapper_delete">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete selected snapshot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Delete Snapshot</string>
              </property>
@@ -443,9 +425,6 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Browse files on selected snapshot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Browse Snapshot</string>
              </property>
@@ -460,9 +439,6 @@
            </item>
            <item>
             <widget class="QToolButton" name="pushButton_restore_snapshot">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore selected snapshot over target subvolume.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
               <string>Restore Snapshot</string>
              </property>
@@ -556,9 +532,6 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_new_config">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set up a new snapper config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
                  <property name="text">
                   <string>New Config</string>
                  </property>
@@ -566,9 +539,6 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_delete_config">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete selected snapper config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
                  <property name="text">
                   <string>Delete Config</string>
                  </property>
@@ -589,9 +559,6 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_save_config">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save settings for current config.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
                  <property name="text">
                   <string>Save Config</string>
                  </property>
@@ -1193,7 +1160,7 @@
                <item>
                 <widget class="QPushButton" name="pushButton_bmApply">
                  <property name="toolTip">
-                  <string>Save btrfs maintenance settings to file.</string>
+                  <string/>
                  </property>
                  <property name="text">
                   <string>Apply</string>
