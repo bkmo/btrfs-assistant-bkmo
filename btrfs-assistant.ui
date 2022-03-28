@@ -299,6 +299,9 @@
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
             <widget class="QPushButton" name="pushButton_loadsubvol">
+             <property name="toolTip">
+              <string>Refresh list of subvolumes for selected device.</string>
+             </property>
              <property name="text">
               <string>Refresh Subvolumes</string>
              </property>
@@ -319,6 +322,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_deletesubvol">
+             <property name="toolTip">
+              <string>Delete selected btrfs subvolume.</string>
+             </property>
              <property name="text">
               <string>Delete Selected</string>
              </property>
@@ -376,6 +382,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="pushButton_snapper_create">
+             <property name="toolTip">
+              <string>Create new snapshot for selected config.</string>
+             </property>
              <property name="text">
               <string>New Snapshot</string>
              </property>
@@ -390,6 +399,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="pushButton_snapper_delete">
+             <property name="toolTip">
+              <string>Delete selected snapshot.</string>
+             </property>
              <property name="text">
               <string>Delete Snapshot</string>
              </property>
@@ -410,6 +422,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Browse files on selected snapshot.</string>
+             </property>
              <property name="text">
               <string>Browse Snapshot</string>
              </property>
@@ -424,6 +439,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="pushButton_restore_snapshot">
+             <property name="toolTip">
+              <string>Restore selected snapshot over target subvolume.</string>
+             </property>
              <property name="text">
               <string>Restore Snapshot</string>
              </property>
@@ -517,6 +535,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_new_config">
+                 <property name="toolTip">
+                  <string>Set up a new snapper config.</string>
+                 </property>
                  <property name="text">
                   <string>New Config</string>
                  </property>
@@ -524,6 +545,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_delete_config">
+                 <property name="toolTip">
+                  <string>Delete selected snapper config.</string>
+                 </property>
                  <property name="text">
                   <string>Delete Config</string>
                  </property>
@@ -544,6 +568,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_snapper_save_config">
+                 <property name="toolTip">
+                  <string>Save settings for current config.</string>
+                 </property>
                  <property name="text">
                   <string>Save Config</string>
                  </property>
@@ -1144,6 +1171,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_bmApply">
+                 <property name="toolTip">
+                  <string>Save btrfs maintenance settings to file.</string>
+                 </property>
                  <property name="text">
                   <string>Apply</string>
                  </property>
