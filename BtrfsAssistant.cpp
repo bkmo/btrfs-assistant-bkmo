@@ -105,8 +105,10 @@ void BtrfsAssistant::btrfsBalanceStatusUpdateUI() {
             m_balanceTimer->start();
         }
     } else {
-        // update status to current balance operation status
+        // update status to reflect no balance running and stop timer
         m_ui->label_btrfsBalanceStatus->setText("No balance running.");
+        m_ui->pushButton_btrfsBalance->setText("Start");
+        m_balanceTimer->stop();
     }
 }
 
@@ -122,6 +124,9 @@ void BtrfsAssistant::btrfsScrubStatusUpdateUI() {
         if (m_scrubTimer->timerId() == -1) {
             m_scrubTimer->start();
         }
+    } else {
+        m_scrubTimer->stop();
+        m_ui->pushButton_btrfsScrub->setText("Start");
     }
 }
 
@@ -585,38 +590,26 @@ void BtrfsAssistant::on_pushButton_bmApply_clicked() {
 void BtrfsAssistant::on_pushButton_btrfsBalance_clicked() {
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
 
-    btrfsBalanceStatusUpdateUI();
-
     // Stop or start balance depending on current operation
     if (m_ui->pushButton_btrfsBalance->text().contains("Stop")) {
         m_btrfs->stopBalanceRoot(uuid);
-        m_ui->pushButton_btrfsBalance->setText("Start");
         btrfsBalanceStatusUpdateUI();
-        m_balanceTimer->stop();
     } else {
         m_btrfs->startBalanceRoot(uuid);
-        m_ui->pushButton_btrfsBalance->setText("Stop");
         btrfsBalanceStatusUpdateUI();
-        m_balanceTimer->start();
     }
 }
 
 void BtrfsAssistant::on_pushButton_btrfsScrub_clicked() {
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
 
-    btrfsScrubStatusUpdateUI();
-
     // Stop or start scrub depending on current operation
     if (m_ui->pushButton_btrfsScrub->text().contains("Stop")) {
         m_btrfs->stopScrubRoot(uuid);
-        m_ui->pushButton_btrfsScrub->setText("Start");
         btrfsScrubStatusUpdateUI();
-        m_scrubTimer->stop();
     } else {
         m_btrfs->startScrubRoot(uuid);
-        m_ui->pushButton_btrfsScrub->setText("Stop");
         btrfsScrubStatusUpdateUI();
-        m_scrubTimer->start();
     }
 }
 
