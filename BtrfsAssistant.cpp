@@ -911,7 +911,7 @@ void BtrfsAssistant::on_pushButton_btrfsBalance_clicked(){
     // Stop or start balance depending on current operation
     if (m_ui->pushButton_btrfsBalance->text().contains("Stop")) {
         m_btrfs->stopBalanceRoot(uuid);
-        m_ui->pushButton_btrfsBalance->setText("Balance");
+        m_ui->pushButton_btrfsBalance->setText("Start");
         btrfsBalanceStatusUpdateUI();
         balanceTimer->stop();
     } else {
@@ -930,7 +930,7 @@ void BtrfsAssistant::on_pushButton_btrfsScrub_clicked(){
     // Stop or start scrub depending on current operation
     if (m_ui->pushButton_btrfsScrub->text().contains("Stop")) {
         m_btrfs->stopScrubRoot(uuid);
-        m_ui->pushButton_btrfsScrub->setText("Scrub");
+        m_ui->pushButton_btrfsScrub->setText("Start");
         btrfsScrubStatusUpdateUI();
         scrubTimer->stop();
     } else {
@@ -953,13 +953,17 @@ void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
     QString balanceStatus = m_btrfs->checkBalanceStatus(m_btrfs->mountRoot(uuid));
 
-    // update status to current balance operation status
-    m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
     // if balance is running currently, make sure you can stop it and we monitor progress
     if (!balanceStatus.contains("No balance found")) {
         m_ui->pushButton_btrfsBalance->setText("Stop");
+        // update status to current balance operation status
+        m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
+        // keep updating UI if it isn't already doing so
         if (balanceTimer->timerId() == -1)
             balanceTimer->start();
+    } else {
+        // update status to current balance operation status
+        m_ui->label_btrfsBalanceStatus->setText("No balance running.");
     }
 }
 
