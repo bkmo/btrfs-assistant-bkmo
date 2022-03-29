@@ -60,7 +60,14 @@ class BtrfsAssistant : public QMainWindow {
     bool m_hasBtrfsmaintenance = false;
     Snapper *m_snapper;
     Ui::BtrfsAssistant *m_ui;
+
+    /**
+     * @brief Timer used to periodically update UI on balance progress
+     */
     QTimer *balanceTimer;
+    /**
+     * @brief Timer used to periodically update UI on scrub progress
+     */
     QTimer *scrubTimer;
 
     /**

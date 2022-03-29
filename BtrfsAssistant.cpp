@@ -953,9 +953,13 @@ void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
     QString balanceStatus = m_btrfs->checkBalanceStatus(m_btrfs->mountRoot(uuid));
 
+    // update status to current balance operation status
     m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
+    // if balance is running currently, make sure you can stop it and we monitor progress
     if (!balanceStatus.contains("No balance found")) {
         m_ui->pushButton_btrfsBalance->setText("Stop");
+        if (balanceTimer->timerId() == -1)
+            balanceTimer->start();
     }
 }
 
@@ -963,8 +967,12 @@ void BtrfsAssistant::btrfsScrubStatusUpdateUI(){
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
     QString scrubStatus = m_btrfs->checkScrubStatus(m_btrfs->mountRoot(uuid));
 
+    // update status to current scrub operation status
     m_ui->label_btrfsScrubStatus->setText(scrubStatus);
+    // if scrub is running currently, make sure you can stop it and we monitor progress
     if (scrubStatus.contains("ETA:")) {
         m_ui->pushButton_btrfsScrub->setText("Stop");
+        if (scrubTimer->timerId() == -1)
+            scrubTimer->start();
     }
 }
