@@ -6,8 +6,8 @@
 #include "System.h"
 
 #include <QDebug>
-#include <QTimer>
 #include <QThread>
+#include <QTimer>
 
 /**
  * @brief A simple wrapper to QMessageBox for creating consistent error messages
@@ -66,16 +66,14 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
     // timers for filesystem operations
     balanceTimer = new QTimer(this);
     scrubTimer = new QTimer(this);
-    connect(balanceTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsBalanceTimer );
-    connect(scrubTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsScrubTimer );
+    connect(balanceTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsBalanceTimer);
+    connect(scrubTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsScrubTimer);
 
     setup();
     this->setWindowTitle(QCoreApplication::applicationName());
 }
 
-BtrfsAssistant::~BtrfsAssistant() {
-    delete m_ui;
-}
+BtrfsAssistant::~BtrfsAssistant() { delete m_ui; }
 void BtrfsAssistant::enableRestoreMode(bool enable) {
     m_ui->pushButton_snapper_create->setEnabled(!enable);
     m_ui->pushButton_snapper_delete->setEnabled(!enable);
@@ -102,7 +100,7 @@ void BtrfsAssistant::loadSnapperRestoreMode() {
     // Clear the existing info
     m_ui->comboBox_snapper_configs->clear();
 
-     // Load snapper subvolumes into combobox.
+    // Load snapper subvolumes into combobox.
     const QStringList configs = m_snapper->subvolKeys();
     for (const QString &config : configs) {
         m_ui->comboBox_snapper_configs->addItem(config);
@@ -903,7 +901,7 @@ void BtrfsAssistant::on_pushButton_SnapperUnitsApply_clicked() {
     m_ui->pushButton_SnapperUnitsApply->clearFocus();
 }
 
-void BtrfsAssistant::on_pushButton_btrfsBalance_clicked(){
+void BtrfsAssistant::on_pushButton_btrfsBalance_clicked() {
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
 
     btrfsBalanceStatusUpdateUI();
@@ -922,7 +920,7 @@ void BtrfsAssistant::on_pushButton_btrfsBalance_clicked(){
     }
 }
 
-void BtrfsAssistant::on_pushButton_btrfsScrub_clicked(){
+void BtrfsAssistant::on_pushButton_btrfsScrub_clicked() {
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
 
     btrfsScrubStatusUpdateUI();
@@ -941,15 +939,11 @@ void BtrfsAssistant::on_pushButton_btrfsScrub_clicked(){
     }
 }
 
-void BtrfsAssistant::btrfsBalanceTimer(){
-    btrfsBalanceStatusUpdateUI();
-}
+void BtrfsAssistant::btrfsBalanceTimer() { btrfsBalanceStatusUpdateUI(); }
 
-void BtrfsAssistant::btrfsScrubTimer(){
-    btrfsScrubStatusUpdateUI();
-}
+void BtrfsAssistant::btrfsScrubTimer() { btrfsScrubStatusUpdateUI(); }
 
-void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
+void BtrfsAssistant::btrfsBalanceStatusUpdateUI() {
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
     QString balanceStatus = m_btrfs->checkBalanceStatus(m_btrfs->mountRoot(uuid));
 
@@ -967,7 +961,7 @@ void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
     }
 }
 
-void BtrfsAssistant::btrfsScrubStatusUpdateUI(){
+void BtrfsAssistant::btrfsScrubStatusUpdateUI() {
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
     QString scrubStatus = m_btrfs->checkScrubStatus(m_btrfs->mountRoot(uuid));
 

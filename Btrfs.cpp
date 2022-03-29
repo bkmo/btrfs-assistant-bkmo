@@ -5,9 +5,7 @@
 #include <QDir>
 #include <QUuid>
 
-Btrfs::Btrfs(QObject *parent) : QObject{parent} {
-    reloadVolumes();
-}
+Btrfs::Btrfs(QObject *parent) : QObject{parent} { reloadVolumes(); }
 
 const BtrfsMeta Btrfs::btrfsVolume(const QString &uuid) const {
     // If the uuid isn't found return a default constructed btrfsMeta
@@ -362,18 +360,17 @@ void Btrfs::startDefragRoot(const QString &uuid) {
     System::runCmd("btrfs filesystem defragment start " + mountpoint + " -r", false);
 }
 
-const QString Btrfs::checkBalanceStatus(const QString &mountpoint) const{
+const QString Btrfs::checkBalanceStatus(const QString &mountpoint) const {
     // run balance command against root
     return System::runCmd("btrfs balance status " + mountpoint, false).output;
 }
 
-const QString Btrfs::checkScrubStatus(const QString &mountpoint) const{
+const QString Btrfs::checkScrubStatus(const QString &mountpoint) const {
     // run scrub command against root
     return System::runCmd("btrfs scrub status " + mountpoint, false).output;
 }
 
-const QString Btrfs::checkDefragStatus(const QString &mountpoint) const{
+const QString Btrfs::checkDefragStatus(const QString &mountpoint) const {
     // run defrag command against root
     return System::runCmd("btrfs defrag status " + mountpoint, false).output;
 }
-
