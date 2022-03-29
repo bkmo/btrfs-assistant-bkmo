@@ -7,6 +7,7 @@
 
 #include <QDebug>
 #include <QTimer>
+#include <QThread>
 
 /**
  * @brief A simple wrapper to QMessageBox for creating consistent error messages
@@ -55,11 +56,20 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
         exit(1);
     }
 
+    //
     m_btrfs = btrfs;
     m_snapper = snapper;
     m_btrfsMaint = btrfsMaintenance;
     m_hasSnapper = snapper != nullptr;
     m_hasBtrfsmaintenance = btrfsMaintenance != nullptr;
+
+    // timers for filesystem operations
+    balanceTimer = new QTimer(this);
+    scrubTimer = new QTimer(this);
+    defragTimer = new QTimer(this);
+    connect(balanceTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsBalanceTimer );
+    connect(scrubTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsScrubTimer );
+    connect(defragTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsDefragTimer );
 
     setup();
     this->setWindowTitle(QCoreApplication::applicationName());
@@ -419,11 +429,8 @@ bool BtrfsAssistant::setup() {
     m_ui->pushButton_restore_snapshot->setEnabled(false);
     m_ui->pushButton_snapperBrowse->setEnabled(false);
 
-    QString balanceStatus = m_btrfs->checkBalanceStatus("/");
-    m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
-    if (!balanceStatus.contains("No balance found")) {
-        m_ui->pushButton_btrfsBalance->setText("Stop");
-    }
+    btrfsBalanceStatusUpdateUI();
+    btrfsScrubStatusUpdateUI();
 
     // Populate or hide btrfs maintenance tab depending on if system has btrfs maintenance units
     if (m_hasBtrfsmaintenance) {
@@ -895,28 +902,97 @@ void BtrfsAssistant::on_pushButton_SnapperUnitsApply_clicked() {
 }
 
 void BtrfsAssistant::on_pushButton_btrfsBalance_clicked(){
-    QString balanceStatus = m_btrfs->checkBalanceStatus("/");
-    m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
-    QTimer *timer = new QTimer(this);
     QString uuid = m_ui->comboBox_btrfsdevice->currentText();
-    connect(timer, SIGNAL(timeout()), this, SLOT(m_ui->label_btrfsBalanceStatus->setText(m_btrfs->checkBalanceStatus("/"))));
+
+    btrfsBalanceStatusUpdateUI();
 
     // Stop or start balance depending on current operation
     if (m_ui->pushButton_btrfsBalance->text().contains("Stop")) {
         m_btrfs->stopBalanceRoot(uuid);
         m_ui->pushButton_btrfsBalance->setText("Balance");
-        timer->stop();
+        btrfsBalanceStatusUpdateUI();
+        balanceTimer->stop();
     } else {
         m_btrfs->startBalanceRoot(uuid);
         m_ui->pushButton_btrfsBalance->setText("Stop");
-        timer->start(1000);
+        btrfsBalanceStatusUpdateUI();
+        balanceTimer->start();
     }
 }
 
 void BtrfsAssistant::on_pushButton_btrfsScrub_clicked(){
-    // TODO:
+    QString uuid = m_ui->comboBox_btrfsdevice->currentText();
+
+    btrfsScrubStatusUpdateUI();
+
+    // Stop or start scrub depending on current operation
+    if (m_ui->pushButton_btrfsScrub->text().contains("Stop")) {
+        m_btrfs->stopScrubRoot(uuid);
+        m_ui->pushButton_btrfsScrub->setText("Scrub");
+        btrfsScrubStatusUpdateUI();
+        scrubTimer->stop();
+    } else {
+        m_btrfs->startScrubRoot(uuid);
+        m_ui->pushButton_btrfsScrub->setText("Stop");
+        btrfsScrubStatusUpdateUI();
+        scrubTimer->start();
+    }
 }
 
 void BtrfsAssistant::on_pushButton_btrfsDefrag_clicked(){
-    // TODO:
+//    QString uuid = m_ui->comboBox_btrfsdevice->currentText();
+
+//    btrfsDefragStatusUpdateUI();
+
+//    // Stop or start defrag depending on current operation
+//    if (m_ui->pushButton_btrfsDefrag->text().contains("Stop")) {
+//        m_btrfs->stopDefragRoot(uuid);
+//        m_ui->pushButton_btrfsDefrag->setText("Defrag");
+//        btrfsDefragStatusUpdateUI();
+//        defragTimer->stop();
+//    } else {
+//        m_btrfs->startDefragRoot(uuid);
+//        m_ui->pushButton_btrfsDefrag->setText("Stop");
+//        btrfsDefragStatusUpdateUI();
+//        defragTimer->start();
+//    }
+}
+
+void BtrfsAssistant::btrfsBalanceTimer(){
+    btrfsBalanceStatusUpdateUI();
+}
+
+void BtrfsAssistant::btrfsScrubTimer(){
+    btrfsScrubStatusUpdateUI();
+}
+
+void BtrfsAssistant::btrfsDefragTimer(){
+    btrfsDefragStatusUpdateUI();
+}
+
+void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
+    QString balanceStatus = m_btrfs->checkBalanceStatus("/");
+
+    m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
+    if (!balanceStatus.contains("No balance found")) {
+        m_ui->pushButton_btrfsBalance->setText("Stop");
+    }
+}
+
+void BtrfsAssistant::btrfsScrubStatusUpdateUI(){
+    QString scrubStatus = m_btrfs->checkScrubStatus("/");
+
+    m_ui->label_btrfsScrubStatus->setText(scrubStatus);
+    if (scrubStatus.contains("ETA:")) {
+        m_ui->pushButton_btrfsScrub->setText("Stop");
+    }
+}
+
+void BtrfsAssistant::btrfsDefragStatusUpdateUI(){
+//    QString defragStatus = m_btrfs->checkDefragStatus("/");
+
+//    m_ui->label_btrfsDefragStatus->setText(defragStatus);
+//    if (defragStatus.contains("ETA:")) {
+//        m_ui->pushButton_btrfsDefrag->setText("Stop");
+//    }
 }

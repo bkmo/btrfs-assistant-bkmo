@@ -5,7 +5,9 @@
 #include <QDir>
 #include <QUuid>
 
-Btrfs::Btrfs(QObject *parent) : QObject{parent} { reloadVolumes(); }
+Btrfs::Btrfs(QObject *parent) : QObject{parent} {
+    reloadVolumes();
+}
 
 const BtrfsMeta Btrfs::btrfsVolume(const QString &uuid) const {
     // If the uuid isn't found return a default constructed btrfsMeta
@@ -306,8 +308,91 @@ void Btrfs::stopBalanceRoot(const QString &uuid) {
     System::runCmd("btrfs balance cancel " + mountpoint, false);
 }
 
+void Btrfs::startScrubRoot(const QString &uuid) {
+    // First make sure the data we are trying to scrub exists
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        reloadVolumes();
+    }
+
+    // If it still doesn't exist, we need to bail
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        qWarning() << tr("UUID " + uuid.toUtf8() + " not found!");
+        return;
+    }
+
+    QString mountpoint = mountRoot(uuid);
+
+    // run balance command against root
+    System::runCmd("btrfs scrub start " + mountpoint, false);
+}
+
+void Btrfs::stopScrubRoot(const QString &uuid) {
+    // First make sure the data we are trying to scrub exists
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        reloadVolumes();
+    }
+
+    // If it still doesn't exist, we need to bail
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        qWarning() << tr("UUID " + uuid.toUtf8() + " not found!");
+        return;
+    }
+
+    QString mountpoint = mountRoot(uuid);
+
+    // run balance command against root
+    System::runCmd("btrfs scrub cancel " + mountpoint, false);
+}
+
+void Btrfs::startDefragRoot(const QString &uuid) {
+    // First make sure the data we are trying to defrag exists
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        reloadVolumes();
+    }
+
+    // If it still doesn't exist, we need to bail
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        qWarning() << tr("UUID " + uuid.toUtf8() + " not found!");
+        return;
+    }
+
+    QString mountpoint = mountRoot(uuid);
+
+    // run defrag command against root
+    System::runCmd("btrfs filesystem defragment start " + mountpoint + " -r", false);
+}
+
+void Btrfs::stopDefragRoot(const QString &uuid) {
+    // First make sure the data we are trying to Defrag exists
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        reloadVolumes();
+    }
+
+    // If it still doesn't exist, we need to bail
+    if (!m_volumes.contains(uuid) || !m_volumes[uuid].populated) {
+        qWarning() << tr("UUID " + uuid.toUtf8() + " not found!");
+        return;
+    }
+
+    QString mountpoint = mountRoot(uuid);
+
+    // run defrag command against root
+    System::runCmd("btrfs filesystem defragment cancel " + mountpoint, false);
+}
+
 
 const QString Btrfs::checkBalanceStatus(const QString &mountpoint) const{
     // run balance command against root
     return System::runCmd("btrfs balance status " + mountpoint, false).output;
 }
+
+const QString Btrfs::checkScrubStatus(const QString &mountpoint) const{
+    // run scrub command against root
+    return System::runCmd("btrfs scrub status " + mountpoint, false).output;
+}
+
+const QString Btrfs::checkDefragStatus(const QString &mountpoint) const{
+    // run defrag command against root
+    return System::runCmd("btrfs defrag status " + mountpoint, false).output;
+}
+

@@ -34,6 +34,18 @@ class BtrfsAssistant : public QMainWindow {
      */
     explicit BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs, Snapper *snapper, QWidget *parent = 0);
     ~BtrfsAssistant();
+    /**
+     * @brief Method used to fetch and update the btrfs balance status
+     */
+    void btrfsBalanceStatusUpdateUI();
+    /**
+     * @brief Method used to fetch and update the btrfs balance status
+     */
+    void btrfsScrubStatusUpdateUI();
+    /**
+     * @brief Method used to fetch and update the btrfs balance status
+     */
+    void btrfsDefragStatusUpdateUI();
 
   private:
     /**
@@ -48,6 +60,9 @@ class BtrfsAssistant : public QMainWindow {
     bool m_hasBtrfsmaintenance = false;
     Snapper *m_snapper;
     Ui::BtrfsAssistant *m_ui;
+    QTimer *balanceTimer;
+    QTimer *scrubTimer;
+    QTimer *defragTimer;
 
     /**
      * @brief Toggle the UI elements in Snapper tab depending on restore mode checkbox state.
@@ -222,5 +237,17 @@ class BtrfsAssistant : public QMainWindow {
      * @brief Btrfs balance button handler
      */
     void on_pushButton_btrfsDefrag_clicked();
+    /**
+     * @brief Timer that is used to fetch and update btrfs balance status.
+     */
+    void btrfsBalanceTimer();
+    /**
+     * @brief Timer that is used to fetch and update btrfs scrub status.
+     */
+    void btrfsScrubTimer();
+    /**
+     * @brief Timer that is used to fetch and update btrfs defrag status.
+     */
+    void btrfsDefragTimer();
 };
 #endif // BTRFSASSISTANT_H
