@@ -212,12 +212,6 @@ class Btrfs : public QObject {
      */
     void startDefragRoot(const QString &uuid);
 
-    /**
-     * @brief Stops a defrag operation on root subvolume for device.
-     * @param uuid
-     */
-    void stopDefragRoot(const QString &uuid);
-
   private:
     // A map of BtrfsMeta.  The key is UUID
     QMap<QString, BtrfsMeta> m_volumes;

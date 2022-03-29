@@ -62,7 +62,6 @@ class BtrfsAssistant : public QMainWindow {
     Ui::BtrfsAssistant *m_ui;
     QTimer *balanceTimer;
     QTimer *scrubTimer;
-    QTimer *defragTimer;
 
     /**
      * @brief Toggle the UI elements in Snapper tab depending on restore mode checkbox state.
@@ -230,13 +229,9 @@ class BtrfsAssistant : public QMainWindow {
      */
     void on_pushButton_btrfsBalance_clicked();
     /**
-     * @brief Btrfs balance button handler
+     * @brief Btrfs scrub button handler
      */
     void on_pushButton_btrfsScrub_clicked();
-    /**
-     * @brief Btrfs balance button handler
-     */
-    void on_pushButton_btrfsDefrag_clicked();
     /**
      * @brief Timer that is used to fetch and update btrfs balance status.
      */
@@ -245,9 +240,5 @@ class BtrfsAssistant : public QMainWindow {
      * @brief Timer that is used to fetch and update btrfs scrub status.
      */
     void btrfsScrubTimer();
-    /**
-     * @brief Timer that is used to fetch and update btrfs defrag status.
-     */
-    void btrfsDefragTimer();
 };
 #endif // BTRFSASSISTANT_H

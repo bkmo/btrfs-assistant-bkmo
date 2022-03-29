@@ -66,10 +66,8 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
     // timers for filesystem operations
     balanceTimer = new QTimer(this);
     scrubTimer = new QTimer(this);
-    defragTimer = new QTimer(this);
     connect(balanceTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsBalanceTimer );
     connect(scrubTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsScrubTimer );
-    connect(defragTimer, &QTimer::timeout, this, &BtrfsAssistant::btrfsDefragTimer );
 
     setup();
     this->setWindowTitle(QCoreApplication::applicationName());
@@ -939,35 +937,12 @@ void BtrfsAssistant::on_pushButton_btrfsScrub_clicked(){
     }
 }
 
-void BtrfsAssistant::on_pushButton_btrfsDefrag_clicked(){
-//    QString uuid = m_ui->comboBox_btrfsdevice->currentText();
-
-//    btrfsDefragStatusUpdateUI();
-
-//    // Stop or start defrag depending on current operation
-//    if (m_ui->pushButton_btrfsDefrag->text().contains("Stop")) {
-//        m_btrfs->stopDefragRoot(uuid);
-//        m_ui->pushButton_btrfsDefrag->setText("Defrag");
-//        btrfsDefragStatusUpdateUI();
-//        defragTimer->stop();
-//    } else {
-//        m_btrfs->startDefragRoot(uuid);
-//        m_ui->pushButton_btrfsDefrag->setText("Stop");
-//        btrfsDefragStatusUpdateUI();
-//        defragTimer->start();
-//    }
-}
-
 void BtrfsAssistant::btrfsBalanceTimer(){
     btrfsBalanceStatusUpdateUI();
 }
 
 void BtrfsAssistant::btrfsScrubTimer(){
     btrfsScrubStatusUpdateUI();
-}
-
-void BtrfsAssistant::btrfsDefragTimer(){
-    btrfsDefragStatusUpdateUI();
 }
 
 void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
@@ -986,13 +961,4 @@ void BtrfsAssistant::btrfsScrubStatusUpdateUI(){
     if (scrubStatus.contains("ETA:")) {
         m_ui->pushButton_btrfsScrub->setText("Stop");
     }
-}
-
-void BtrfsAssistant::btrfsDefragStatusUpdateUI(){
-//    QString defragStatus = m_btrfs->checkDefragStatus("/");
-
-//    m_ui->label_btrfsDefragStatus->setText(defragStatus);
-//    if (defragStatus.contains("ETA:")) {
-//        m_ui->pushButton_btrfsDefrag->setText("Stop");
-//    }
 }
