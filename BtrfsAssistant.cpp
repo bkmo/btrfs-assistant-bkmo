@@ -209,6 +209,10 @@ void BtrfsAssistant::populateBtrfsUi(const QString &uuid) {
     } else {
         m_ui->label_btrfsmessage->setText(tr("Your disk space is well utilized"));
     }
+
+    // filesystems operation section
+    btrfsBalanceStatusUpdateUI();
+    btrfsScrubStatusUpdateUI();
 }
 
 void BtrfsAssistant::populateSnapperConfigSettings() {
@@ -946,7 +950,8 @@ void BtrfsAssistant::btrfsScrubTimer(){
 }
 
 void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
-    QString balanceStatus = m_btrfs->checkBalanceStatus("/");
+    QString uuid = m_ui->comboBox_btrfsdevice->currentText();
+    QString balanceStatus = m_btrfs->checkBalanceStatus(m_btrfs->mountRoot(uuid));
 
     m_ui->label_btrfsBalanceStatus->setText(balanceStatus);
     if (!balanceStatus.contains("No balance found")) {
@@ -955,7 +960,8 @@ void BtrfsAssistant::btrfsBalanceStatusUpdateUI(){
 }
 
 void BtrfsAssistant::btrfsScrubStatusUpdateUI(){
-    QString scrubStatus = m_btrfs->checkScrubStatus("/");
+    QString uuid = m_ui->comboBox_btrfsdevice->currentText();
+    QString scrubStatus = m_btrfs->checkScrubStatus(m_btrfs->mountRoot(uuid));
 
     m_ui->label_btrfsScrubStatus->setText(scrubStatus);
     if (scrubStatus.contains("ETA:")) {
