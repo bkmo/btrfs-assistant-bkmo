@@ -34,6 +34,8 @@ class SubvolModel : public QAbstractTableModel {
      */
     void loadModel(const QMap<int, Subvolume> &subvolData, const QMap<int, QVector<long>> &subvolSize);
 
+    void clearModel();
+
     void setIncludeSnapshots(bool includeSnapshots) { m_includeSnapshots = includeSnapshots; }
 
   private:

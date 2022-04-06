@@ -351,7 +351,7 @@ void BtrfsAssistant::refreshBtrfsUi() {
 
     // Repopulate data using the first detected btrfs filesystem.
     populateBtrfsUi(m_ui->comboBox_btrfsDevice->currentText());
-    refreshSubvolListUi(m_ui->comboBox_btrfsDevice->currentText());
+    refreshSubvolListUi();
 }
 
 void BtrfsAssistant::refreshSnapperServices() {
@@ -367,13 +367,20 @@ void BtrfsAssistant::refreshSnapperServices() {
     }
 }
 
-void BtrfsAssistant::refreshSubvolListUi(const QString &uuid) {
-    // Reload the subvolumes list
+void BtrfsAssistant::refreshSubvolListUi() {
+    
     m_btrfs->subvolModel()->setIncludeSnapshots(m_ui->checkBox_subvolIncludeSnapshots->isChecked());
 
-    // Remove this when https://gitlab.com/btrfs-assistant/btrfs-assistant/-/merge_requests/11 is merged!!
-    m_btrfs->switchModelUuid(uuid);
+    bool showQuota = false;
+    
+    for (const QString &uuid : m_btrfs->listFilesystems()) {
+        // Check to see if the size related colums should be hidden
+        if (Btrfs::isQuotaEnabled(Btrfs::mountRoot(uuid))) {
+            showQuota = true;
+        }
+    }
 
+    // Update table sizes and columns based on subvolumes
     m_ui->tableView_subvols->horizontalHeader()->setStretchLastSection(true);
     m_ui->tableView_subvols->resizeColumnsToContents();
     m_ui->tableView_subvols->resizeRowsToContents();
@@ -381,8 +388,8 @@ void BtrfsAssistant::refreshSubvolListUi(const QString &uuid) {
     m_ui->tableView_subvols->hideColumn(SubvolHeader::subvolId);
     m_ui->tableView_subvols->hideColumn(SubvolHeader::parentId);
 
-    // Check to see if the size related colums should be hidden
-    if (Settings::getInstance().value("allow_temp_quota", "") != "true" && !Btrfs::isQuotaEnabled(Btrfs::mountRoot(uuid))) {
+    // Hide quota data if no columns supported it
+    if (!showQuota) {
         m_ui->tableView_subvols->hideColumn(SubvolHeader::size);
         m_ui->tableView_subvols->hideColumn(SubvolHeader::exclusive);
     } else {
@@ -497,10 +504,10 @@ void BtrfsAssistant::on_checkBox_bmDefrag_clicked(bool checked) { m_ui->listWidg
 
 void BtrfsAssistant::on_checkBox_bmScrub_clicked(bool checked) { m_ui->listWidget_bmScrub->setDisabled(checked); }
 
-void BtrfsAssistant::on_checkBox_subvolIncludeSnapshots_clicked() {
-    m_btrfs->loadSubvols(m_ui->comboBox_btrfsDevice->currentText());
-    refreshSubvolListUi(m_ui->comboBox_btrfsDevice->currentText());
-}
+void BtrfsAssistant::on_checkBox_subvolIncludeSnapshots_clicked() { 
+    m_btrfs->loadSubvols(m_ui->comboBox_btrfsDevice->currentText()); // update to work with new setup
+    refreshSubvolListUi();
+     }
 
 void BtrfsAssistant::on_checkBox_snapperEnableTimeline_clicked(bool checked) { snapperTimelineEnable(checked); }
 
@@ -515,7 +522,7 @@ void BtrfsAssistant::on_comboBox_btrfsDevice_activated(int) {
     if (!uuid.isEmpty()) {
         m_btrfs->loadSubvols(uuid);
         populateBtrfsUi(uuid);
-        refreshSubvolListUi(uuid);
+        refreshSubvolListUi();
     }
     m_ui->comboBox_btrfsDevice->clearFocus();
 }
@@ -657,7 +664,7 @@ void BtrfsAssistant::on_pushButton_subvolDelete_clicked() {
 
     if (success) {
         m_btrfs->loadSubvols(uuid);
-        refreshSubvolListUi(uuid);
+        refreshSubvolListUi();
     } else {
         displayError(tr("Failed to delete subvolume " + subvol.toUtf8()));
     }
@@ -679,9 +686,11 @@ void BtrfsAssistant::on_pushButton_subvolRefresh_clicked() {
         displayError(tr("No device selected") + "\n" + tr("Please Select a device first"));
         return;
     }
-
-    m_btrfs->loadSubvols(uuid);
-    refreshSubvolListUi(uuid);
+for (const QString &uuid : m_btrfs->listFilesystems()) {
+        m_btrfs->loadSubvols(uuid);
+    }
+    
+    refreshSubvolListUi();
 
     m_ui->pushButton_subvolRefresh->clearFocus();
 }

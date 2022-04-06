@@ -81,7 +81,6 @@ void SubvolModel::loadModel(const QMap<int, Subvolume> &subvolData, const QMap<i
     QMutexLocker lock(&m_updateMutex);
 
     beginResetModel();
-    m_data.clear();
     const QList<int> keys = subvolData.keys();
 
     for (const int key : keys) {
@@ -96,5 +95,14 @@ void SubvolModel::loadModel(const QMap<int, Subvolume> &subvolData, const QMap<i
     }
 
     std::sort(m_data.begin(), m_data.end(), [](const Subvolume &a, const Subvolume &b) -> bool { return a.subvolName < b.subvolName; });
+    endResetModel();
+}
+
+void SubvolModel::clearModel() {
+    // Ensure that multiple threads don't try to update the model at the same time
+    QMutexLocker lock(&m_updateMutex);
+
+    beginResetModel();
+    m_data.clear();
     endResetModel();
 }

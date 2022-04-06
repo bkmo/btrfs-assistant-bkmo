@@ -36,6 +36,13 @@ const QStringList Btrfs::children(const int subvolId, const QString &uuid) const
     return children;
 }
 
+void Btrfs::clearSubvols() {
+    // Lock access to m_subvolSize while the model is loading
+    m_sizeMutex.lock();
+    m_subvolModel.clearModel();
+    m_sizeMutex.unlock();
+}
+
 const bool Btrfs::deleteSubvol(const QString &uuid, const int subvolid) {
     Subvolume subvol;
     if (m_volumes.contains(uuid)) {

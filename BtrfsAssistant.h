@@ -92,7 +92,7 @@ class BtrfsAssistant : public QMainWindow {
      * @brief Populates the Btrfs Subvolumes tab with the selected devices information.
      * @param uuid
      */
-    void refreshSubvolListUi(const QString &uuid);
+    void refreshSubvolListUi();
     /**
      * @brief Refresh the Btrfs tab UI.
      */
