@@ -36,15 +36,6 @@ int SubvolModel::rowCount(const QModelIndex &parent) const {
     return m_data.count();
 }
 
-void SubvolModel::clear() {
-    // Ensure that multiple threads don't try to update the model at the same time
-    QMutexLocker lock(&m_updateMutex);
-
-    beginResetModel();
-    m_data.clear();
-    endResetModel();
-}
-
 int SubvolModel::columnCount(const QModelIndex &parent) const {
     if (parent.isValid())
         return 0;
@@ -85,35 +76,29 @@ QVariant SubvolModel::data(const QModelIndex &index, int role) const {
     return QVariant();
 }
 
-void SubvolModel::loadModel(const QMap<int, Subvolume> &subvolData, const QMap<int, QVector<long>> &subvolSize) {
+void SubvolModel::loadModel(const QMap<QString, BtrfsMeta> &volumeData, const QMap<int, QVector<long>> &subvolSize) {
     // Ensure that multiple threads don't try to update the model at the same time
     QMutexLocker lock(&m_updateMutex);
 
     beginResetModel();
-    const QList<int> keys = subvolData.keys();
+    m_data.clear();
 
-    for (const int key : keys) {
-        if (m_includeSnapshots || !(Btrfs::isSnapper(subvolData[key].subvolName) || Btrfs::isTimeshift(subvolData[key].subvolName))) {
-            Subvolume subvol = subvolData[key];
-            if (subvolSize.contains(key) && subvolSize[key].count() == 2) {
-                subvol.size = subvolSize[key][0];
-                subvol.exclusive = subvolSize[key][1];
+    const QList<QString> volumeKeys = volumeData.keys();
+
+    for (const QString key : volumeKeys) {
+
+        for (Subvolume subvol : volumeData[key].subvolumes) {
+
+            if (m_includeSnapshots || !(Btrfs::isSnapper(subvol.subvolName) || Btrfs::isTimeshift(subvol.subvolName))) {
+                if (subvolSize.contains(subvol.subvolId) && subvolSize[subvol.subvolId].count() == 2) {
+                    subvol.size = subvolSize[subvol.subvolId][0];
+                    subvol.exclusive = subvolSize[subvol.subvolId][1];
+                }
+                m_data.append(subvol);
             }
-            m_data.append(subvol);
         }
     }
 
     std::sort(m_data.begin(), m_data.end(), [](const Subvolume &a, const Subvolume &b) -> bool { return a.subvolName < b.subvolName; });
-    endResetModel();
-}
-
-void SubvolModel::removeDeviceData(const QString &uuid) {
-    //  Ensure that multiple threads don't try to update the model at the same time
-    QMutexLocker lock(&m_updateMutex);
-
-    beginResetModel();
-
-    m_data.erase(std::remove_if(m_data.begin(), m_data.end(), [&](Subvolume s) { return s.uuid == uuid; }), m_data.end());
-
     endResetModel();
 }

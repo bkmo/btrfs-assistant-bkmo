@@ -180,7 +180,7 @@ void Btrfs::loadSubvols(const QString &uuid) {
         }
         m_volumes[uuid].subvolumes = subvols;
         loadQgroups(uuid);
-        m_subvolModel.loadModel(m_volumes[uuid].subvolumes, m_subvolSize[uuid]);
+        m_subvolModel.loadModel(m_volumes, m_subvolSize[uuid]);
     }
 }
 
