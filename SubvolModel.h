@@ -28,16 +28,27 @@ class SubvolModel : public QAbstractTableModel {
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     /**
+     * @brief Clear contents of the model data.
+     */
+    void clearModel();
+
+    /**
      * @brief Populates the model using @p subvolData and @p subvolSize
      * @param subvolData - A map of Subvolumes with subvolId as the key
      * @param m_subvolSize - A map of QVectors where subvolId is the key and size is at index 0 and exclusize size at index 1
      */
     void loadModel(const QMap<int, Subvolume> &subvolData, const QMap<int, QVector<long>> &subvolSize);
 
-    void clearModel();
-
+    /**
+     * @brief Removes all the subvolumes in the model for a specific device.
+     * @param uuid - QString device identifier (UUID).
+     */
     void removeDeviceData(const QString &uuid);
 
+    /**
+     * @brief Sets the boolean used to determine whether to include snapshots in the subvolume model.
+     * @param includeSnapshots Bool value to set.
+     */
     void setIncludeSnapshots(bool includeSnapshots) { m_includeSnapshots = includeSnapshots; }
 
   private:

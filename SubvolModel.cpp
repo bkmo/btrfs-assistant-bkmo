@@ -36,6 +36,15 @@ int SubvolModel::rowCount(const QModelIndex &parent) const {
     return m_data.count();
 }
 
+void SubvolModel::clearModel() {
+    // Ensure that multiple threads don't try to update the model at the same time
+    QMutexLocker lock(&m_updateMutex);
+
+    beginResetModel();
+    m_data.clear();
+    endResetModel();
+}
+
 int SubvolModel::columnCount(const QModelIndex &parent) const {
     if (parent.isValid())
         return 0;
@@ -95,15 +104,6 @@ void SubvolModel::loadModel(const QMap<int, Subvolume> &subvolData, const QMap<i
     }
 
     std::sort(m_data.begin(), m_data.end(), [](const Subvolume &a, const Subvolume &b) -> bool { return a.subvolName < b.subvolName; });
-    endResetModel();
-}
-
-void SubvolModel::clearModel() {
-    // Ensure that multiple threads don't try to update the model at the same time
-    QMutexLocker lock(&m_updateMutex);
-
-    beginResetModel();
-    m_data.clear();
     endResetModel();
 }
 
