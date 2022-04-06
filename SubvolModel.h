@@ -30,7 +30,7 @@ class SubvolModel : public QAbstractTableModel {
     /**
      * @brief Clear contents of the model data.
      */
-    void clearModel();
+    void clear();
 
     /**
      * @brief Populates the model using @p subvolData and @p subvolSize

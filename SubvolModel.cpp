@@ -36,7 +36,7 @@ int SubvolModel::rowCount(const QModelIndex &parent) const {
     return m_data.count();
 }
 
-void SubvolModel::clearModel() {
+void SubvolModel::clear() {
     // Ensure that multiple threads don't try to update the model at the same time
     QMutexLocker lock(&m_updateMutex);
 

@@ -65,11 +65,6 @@ class Btrfs : public QObject {
      */
     const QStringList children(const int subvolid, const QString &uuid) const;
 
-    /**
-     * @brief Clears the contents of the SubvolModel
-     */
-    void clearSubvols();
-
     /** @brief Deletes a given subvolume
      *
      *  Deletes the subvol represented by @p subvolid on @p uuid.
