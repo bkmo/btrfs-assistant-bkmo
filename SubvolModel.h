@@ -36,6 +36,8 @@ class SubvolModel : public QAbstractTableModel {
 
     void clearModel();
 
+    void removeDeviceData(const QString &uuid);
+
     void setIncludeSnapshots(bool includeSnapshots) { m_includeSnapshots = includeSnapshots; }
 
   private:

@@ -106,3 +106,14 @@ void SubvolModel::clearModel() {
     m_data.clear();
     endResetModel();
 }
+
+void SubvolModel::removeDeviceData(const QString &uuid) {
+    //  Ensure that multiple threads don't try to update the model at the same time
+    QMutexLocker lock(&m_updateMutex);
+
+    beginResetModel();
+
+    m_data.erase(std::remove_if(m_data.begin(), m_data.end(), [&](Subvolume s) { return s.uuid == uuid; }), m_data.end());
+
+    endResetModel();
+}
