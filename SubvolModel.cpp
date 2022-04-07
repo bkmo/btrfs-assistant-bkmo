@@ -76,7 +76,7 @@ QVariant SubvolModel::data(const QModelIndex &index, int role) const {
     return QVariant();
 }
 
-void SubvolModel::loadModel(const QMap<QString, BtrfsMeta> &volumeData, QMap<QString, QMap<int, QVector<long>>> &subvols) {
+void SubvolModel::loadModel(const QMap<QString, BtrfsMeta> &volumeData, const QMap<QString, QMap<int, QVector<long>>> &subvols) {
     // Ensure that multiple threads don't try to update the model at the same time
     QMutexLocker lock(&m_updateMutex);
 
@@ -85,9 +85,7 @@ void SubvolModel::loadModel(const QMap<QString, BtrfsMeta> &volumeData, QMap<QSt
 
     const QList<QString> volumeIdentifiers = volumeData.keys();
 
-    for (const QString uuid : volumeIdentifiers) {
-
-        subvols[uuid]; // add UUID to m_subvolSize to be used by loadQgroups
+    for (const QString &uuid : volumeIdentifiers) {
 
         for (Subvolume subvol : volumeData[uuid].subvolumes) {
 
