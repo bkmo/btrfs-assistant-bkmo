@@ -371,6 +371,7 @@ void BtrfsAssistant::refreshSubvolListUi(const QString &uuid) {
     // Reload the subvolumes list
     m_btrfs->subvolModel()->setIncludeSnapshots(m_ui->checkBox_subvolIncludeSnapshots->isChecked());
     m_btrfs->loadSubvols(uuid);
+    m_snapper->loadSubvols();
     m_ui->tableView_subvols->horizontalHeader()->setStretchLastSection(true);
     m_ui->tableView_subvols->resizeColumnsToContents();
     m_ui->tableView_subvols->resizeRowsToContents();
