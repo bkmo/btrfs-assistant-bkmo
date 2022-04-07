@@ -141,6 +141,7 @@ void Btrfs::loadQgroups(const QString &uuid) {
     if (!m_subvolSize.contains(uuid)) {
         m_subvolSize.insert(uuid, QMap<int, QVector<long>>());
     }
+
     for (const QString &line : qAsConst(outputList)) {
         const QStringList qgroupList = line.split(" ", Qt::SkipEmptyParts);
         int subvolId;
