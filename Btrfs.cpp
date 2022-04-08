@@ -180,6 +180,7 @@ void Btrfs::loadSubvols(const QString &uuid) {
             }
         }
         m_volumes[uuid].subvolumes = subvols;
+        m_subvolSize.remove(uuid); //  clear existing size information in case it is disabled since app launch
         loadQgroups(uuid);
         m_subvolModel.loadModel(m_volumes, m_subvolSize);
     }

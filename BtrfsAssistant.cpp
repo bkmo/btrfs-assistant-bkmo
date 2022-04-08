@@ -368,11 +368,9 @@ void BtrfsAssistant::refreshSnapperServices() {
 }
 
 void BtrfsAssistant::refreshSubvolListUi() {
-    
-    m_btrfs->subvolModel()->setIncludeSnapshots(m_ui->checkBox_subvolIncludeSnapshots->isChecked());
 
     bool showQuota = false;
-    
+
     for (const QString &uuid : m_btrfs->listFilesystems()) {
         // Check to see if the size related colums should be hidden
         if (Btrfs::isQuotaEnabled(Btrfs::mountRoot(uuid))) {
@@ -476,7 +474,6 @@ void BtrfsAssistant::setup() {
         // Hide the btrfs maintenance tab
         m_ui->tabWidget->setTabVisible(m_ui->tabWidget->indexOf(m_ui->tab_btrfsmaintenance), false);
     }
-
 }
 
 void BtrfsAssistant::snapperTimelineEnable(bool enable) {
@@ -504,10 +501,15 @@ void BtrfsAssistant::on_checkBox_bmDefrag_clicked(bool checked) { m_ui->listWidg
 
 void BtrfsAssistant::on_checkBox_bmScrub_clicked(bool checked) { m_ui->listWidget_bmScrub->setDisabled(checked); }
 
-void BtrfsAssistant::on_checkBox_subvolIncludeSnapshots_clicked() { 
-    m_btrfs->loadSubvols(m_ui->comboBox_btrfsDevice->currentText()); // update to work with new setup
+void BtrfsAssistant::on_checkBox_subvolIncludeSnapshots_clicked() {
+    m_btrfs->subvolModel()->setIncludeSnapshots(m_ui->checkBox_subvolIncludeSnapshots->isChecked());
+
+    for (const QString &uuid : m_btrfs->listFilesystems()) {
+        m_btrfs->loadSubvols(uuid);
+    }
+
     refreshSubvolListUi();
-     }
+}
 
 void BtrfsAssistant::on_checkBox_snapperEnableTimeline_clicked(bool checked) { snapperTimelineEnable(checked); }
 
@@ -680,16 +682,11 @@ void BtrfsAssistant::on_pushButton_btrfsRefreshData_clicked() {
 }
 
 void BtrfsAssistant::on_pushButton_subvolRefresh_clicked() {
-    QString uuid = m_ui->comboBox_btrfsDevice->currentText();
 
-    if (uuid.isEmpty()) {
-        displayError(tr("No device selected") + "\n" + tr("Please Select a device first"));
-        return;
-    }
-for (const QString &uuid : m_btrfs->listFilesystems()) {
+    for (const QString &uuid : m_btrfs->listFilesystems()) {
         m_btrfs->loadSubvols(uuid);
     }
-    
+
     refreshSubvolListUi();
 
     m_ui->pushButton_subvolRefresh->clearFocus();
