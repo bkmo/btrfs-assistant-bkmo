@@ -159,6 +159,10 @@ class BtrfsAssistant : public QMainWindow {
      */
     void on_checkBox_subvolIncludeSnapshots_clicked();
     /**
+     * @brief Refresh subvolume list when toggling include docker subvolumes checkbox state.
+     */
+    void on_checkBox_subvolIncludeDocker_clicked();
+    /**
      * @brief Toggle timeline snapshot inputs based on enable timeline snapshots checkbox state.
      * @param checked
      */

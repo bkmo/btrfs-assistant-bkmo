@@ -85,14 +85,22 @@ void SubvolModel::loadModel(const QMap<int, Subvolume> &subvolData, const QMap<i
     const QList<int> keys = subvolData.keys();
 
     for (const int key : keys) {
-        if (m_includeSnapshots || !(Btrfs::isSnapper(subvolData[key].subvolName) || Btrfs::isTimeshift(subvolData[key].subvolName))) {
-            Subvolume subvol = subvolData[key];
-            if (subvolSize.contains(key) && subvolSize[key].count() == 2) {
-                subvol.size = subvolSize[key][0];
-                subvol.exclusive = subvolSize[key][1];
-            }
-            m_data.append(subvol);
+        const auto &subvol = subvolData[key];
+
+        if (!m_includeSnapshots && (Btrfs::isSnapper(subvol.subvolName) || Btrfs::isTimeshift(subvol.subvolName))) {
+            continue;
         }
+
+        if (!m_includeDocker && Btrfs::isDocker(subvol.subvolName)) {
+            continue;
+        }
+
+        Subvolume subvolWithSize = subvol;
+        if (subvolSize.contains(key) && subvolSize[key].count() == 2) {
+            subvolWithSize.size = subvolSize[key][0];
+            subvolWithSize.exclusive = subvolSize[key][1];
+        }
+        m_data.append(subvolWithSize);
     }
 
     std::sort(m_data.begin(), m_data.end(), [](const Subvolume &a, const Subvolume &b) -> bool { return a.subvolName < b.subvolName; });
