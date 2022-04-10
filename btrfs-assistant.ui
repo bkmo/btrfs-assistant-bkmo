@@ -444,19 +444,6 @@
         <string>Subvolumes</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="checkBox_subvolIncludeSnapshots">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Include children subvolumes of .snapshots and timeshift folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Include Timeshift and Snapper Snapshots</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="QScrollArea" name="scrollArea_subvolumes">
           <property name="widgetResizable">
@@ -468,20 +455,10 @@
              <x>0</x>
              <y>0</y>
              <width>904</width>
-             <height>619</height>
+             <height>648</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_10">
-            <item row="1" column="0">
-             <widget class="QTableView" name="tableView_subvols">
-              <property name="selectionMode">
-               <enum>QAbstractItemView::SingleSelection</enum>
-              </property>
-              <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectRows</enum>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
              <widget class="QFrame" name="frame_subvolumesOptions">
               <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -533,6 +510,29 @@
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_subvols">
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="checkBox_subvolIncludeSnapshots">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Include children subvolumes of .snapshots and timeshift folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Include Timeshift and Snapper Snapshots</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
              </widget>
             </item>
            </layout>
