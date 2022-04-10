@@ -47,6 +47,7 @@ class BtrfsAssistant : public QMainWindow {
     bool m_hasSnapper = false;
     bool m_hasBtrfsmaintenance = false;
     Snapper *m_snapper;
+    SubvolumeFilterModel *m_subvolumeModel;
     Ui::BtrfsAssistant *m_ui;
 
     /**
@@ -154,10 +155,6 @@ class BtrfsAssistant : public QMainWindow {
      * @param checked
      */
     void on_checkBox_bmScrub_clicked(bool checked);
-    /**
-     * @brief Refresh subvolume list when toggling include snapshots checkbox state.
-     */
-    void on_checkBox_subvolIncludeSnapshots_clicked();
     /**
      * @brief Toggle timeline snapshot inputs based on enable timeline snapshots checkbox state.
      * @param checked

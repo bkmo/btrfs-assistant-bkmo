@@ -95,6 +95,11 @@ class Btrfs : public QObject {
      */
     static bool isTimeshift(const QString &subvolume) { return subvolume.contains("timeshift-btrfs"); }
 
+    /** @brief Returns true if @p subvolume is a docker subvolume
+     *
+     */
+    static bool isDocker(const QString &subvolume) { return subvolume.startsWith("@/var/lib/docker/btrfs/subvolumes"); }
+
     /** @brief Returns a QStringList of UUIDs containing Btrfs filesystems
      */
     static const QStringList listFilesystems();
@@ -172,7 +177,7 @@ class Btrfs : public QObject {
     /**
      * @brief Returns a pointer to the subvol model
      */
-    SubvolModel *subvolModel() { return &m_subvolModel; }
+    SubvolumeModel *subvolModel() { return &m_subvolModel; }
 
     /**
      * @brief Returns the name of the subvol with id @p subvolId
@@ -221,7 +226,7 @@ class Btrfs : public QObject {
     void switchModelUuid(const QString &uuid);
 
   private:
-    SubvolModel m_subvolModel;
+    SubvolumeModel m_subvolModel;
     // Holds the subvol sizes, the outer key is UUID, the inner key is subvolId, element 0 is size and element 1 is exclusive
     QMap<QString, QMap<int, QVector<long>>> m_subvolSize;
     // A map of BtrfsMeta.  The key is UUID

@@ -6,6 +6,7 @@
 #include "ui_btrfs-assistant.h"
 
 #include <QDebug>
+#include <QHeaderView>
 #include <QThread>
 #include <QTimer>
 
@@ -35,6 +36,9 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
     : QMainWindow(parent), m_ui(new Ui::BtrfsAssistant), m_btrfs(btrfs), m_snapper(snapper), m_btrfsMaint(btrfsMaintenance) {
     m_ui->setupUi(this);
 
+    m_subvolumeModel = new SubvolumeFilterModel(this);
+    m_subvolumeModel->setSourceModel(m_btrfs->subvolModel());
+
     // Ensure the application is running as root
     if (!System::checkRootUid()) {
         displayError(tr("The application must be run as the superuser(root)"));
@@ -52,6 +56,9 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
 
     setup();
     this->setWindowTitle(QCoreApplication::applicationName());
+
+    connect(m_ui->checkBox_subvolIncludeSnapshots, &QCheckBox::toggled, m_subvolumeModel, &SubvolumeFilterModel::setIncludeSnapshots);
+    connect(m_ui->checkBox_subvolIncludeDocker, &QCheckBox::toggled, m_subvolumeModel, &SubvolumeFilterModel::setIncludeDocker);
 }
 
 BtrfsAssistant::~BtrfsAssistant() { delete m_ui; }
@@ -369,25 +376,31 @@ void BtrfsAssistant::refreshSnapperServices() {
 
 void BtrfsAssistant::refreshSubvolListUi(const QString &uuid) {
     // Reload the subvolumes list
-    m_btrfs->subvolModel()->setIncludeSnapshots(m_ui->checkBox_subvolIncludeSnapshots->isChecked());
+    m_subvolumeModel->setIncludeSnapshots(m_ui->checkBox_subvolIncludeSnapshots->isChecked());
+    m_subvolumeModel->setIncludeDocker(m_ui->checkBox_subvolIncludeDocker->isChecked());
 
     // Remove this when https://gitlab.com/btrfs-assistant/btrfs-assistant/-/merge_requests/11 is merged!!
     m_btrfs->switchModelUuid(uuid);
 
-    m_ui->tableView_subvols->horizontalHeader()->setStretchLastSection(true);
+    m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::Name, QHeaderView::Stretch);
     m_ui->tableView_subvols->resizeColumnsToContents();
     m_ui->tableView_subvols->resizeRowsToContents();
     m_ui->tableView_subvols->verticalHeader()->hide();
-    m_ui->tableView_subvols->hideColumn(SubvolHeader::subvolId);
-    m_ui->tableView_subvols->hideColumn(SubvolHeader::parentId);
+    m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Id);
+    m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::ParentId);
 
     // Check to see if the size related colums should be hidden
     if (Settings::getInstance().value("allow_temp_quota", "") != "true" && !Btrfs::isQuotaEnabled(Btrfs::mountRoot(uuid))) {
-        m_ui->tableView_subvols->hideColumn(SubvolHeader::size);
-        m_ui->tableView_subvols->hideColumn(SubvolHeader::exclusive);
+        m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Size);
+        m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Exclusive);
     } else {
-        m_ui->tableView_subvols->showColumn(SubvolHeader::size);
-        m_ui->tableView_subvols->showColumn(SubvolHeader::exclusive);
+        m_ui->tableView_subvols->showColumn(SubvolumeModel::Column::Size);
+        m_ui->tableView_subvols->showColumn(SubvolumeModel::Column::Exclusive);
+    }
+
+    // If there is only a single filesystem then hide the Uuid column
+    if (m_ui->comboBox_btrfsDevice->count() == 1) {
+        m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Uuid);
     }
 }
 
@@ -446,7 +459,7 @@ void BtrfsAssistant::setup() {
     }
 
     // Connect the subvolume view
-    m_ui->tableView_subvols->setModel(m_btrfs->subvolModel());
+    m_ui->tableView_subvols->setModel(m_subvolumeModel);
 
     // Populate the UI
     refreshBtrfsUi();
@@ -469,7 +482,6 @@ void BtrfsAssistant::setup() {
         // Hide the btrfs maintenance tab
         m_ui->tabWidget->setTabVisible(m_ui->tabWidget->indexOf(m_ui->tab_btrfsmaintenance), false);
     }
-
 }
 
 void BtrfsAssistant::snapperTimelineEnable(bool enable) {
@@ -496,11 +508,6 @@ void BtrfsAssistant::on_checkBox_bmBalance_clicked(bool checked) { m_ui->listWid
 void BtrfsAssistant::on_checkBox_bmDefrag_clicked(bool checked) { m_ui->listWidget_bmDefrag->setDisabled(checked); }
 
 void BtrfsAssistant::on_checkBox_bmScrub_clicked(bool checked) { m_ui->listWidget_bmScrub->setDisabled(checked); }
-
-void BtrfsAssistant::on_checkBox_subvolIncludeSnapshots_clicked() {
-    m_btrfs->loadSubvols(m_ui->comboBox_btrfsDevice->currentText());
-    refreshSubvolListUi(m_ui->comboBox_btrfsDevice->currentText());
-}
 
 void BtrfsAssistant::on_checkBox_snapperEnableTimeline_clicked(bool checked) { snapperTimelineEnable(checked); }
 
@@ -614,8 +621,8 @@ void BtrfsAssistant::on_pushButton_subvolDelete_clicked() {
         return;
     }
     QModelIndexList indexes = m_ui->tableView_subvols->selectionModel()->selection().indexes();
-    QString subvol = m_ui->tableView_subvols->model()->data(indexes.at(SubvolHeader::subvolName)).toString();
-    QString uuid = m_ui->tableView_subvols->model()->data(indexes.at(SubvolHeader::uuid)).toString();
+    QString subvol = m_ui->tableView_subvols->model()->data(indexes.at(SubvolumeModel::Column::Name)).toString();
+    QString uuid = m_ui->tableView_subvols->model()->data(indexes.at(SubvolumeModel::Column::Uuid)).toString();
 
     // Make sure the everything is good in the UI
     if (subvol.isEmpty() || uuid.isEmpty()) {
