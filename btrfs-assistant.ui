@@ -472,11 +472,18 @@
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_10">
-            <item row="0" column="0">
-             <widget class="QGroupBox" name="groupBox">
-              <property name="title">
-               <string/>
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableView_subvols">
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
               </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QFrame" name="frame_subvolumesOptions">
               <layout class="QHBoxLayout" name="horizontalLayout_9">
                <item>
                 <spacer name="horizontalSpacer_9">
@@ -526,16 +533,6 @@
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QTableView" name="tableView_subvols">
-              <property name="selectionMode">
-               <enum>QAbstractItemView::SingleSelection</enum>
-              </property>
-              <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectRows</enum>
-              </property>
              </widget>
             </item>
            </layout>
