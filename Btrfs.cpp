@@ -5,7 +5,6 @@
 #include <QDebug>
 #include <QDir>
 #include <QTemporaryDir>
-#include <QtConcurrent/QtConcurrent>
 
 Btrfs::Btrfs(QObject *parent) : QObject{parent} { loadVolumes(); }
 
@@ -358,9 +357,8 @@ void Btrfs::stopScrubRoot(const QString &uuid) {
     }
 }
 
-void Btrfs::switchModelUuid(const QString &uuid)
-{
-    if(isUuidLoaded(uuid)) {
+void Btrfs::switchModelUuid(const QString &uuid) {
+    if (isUuidLoaded(uuid)) {
         m_subvolModel.loadModel(m_volumes[uuid].subvolumes, m_subvolSize[uuid]);
     }
 }
