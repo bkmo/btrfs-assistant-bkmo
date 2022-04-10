@@ -370,6 +370,7 @@ void BtrfsAssistant::refreshSnapperServices() {
 void BtrfsAssistant::refreshSubvolListUi(const QString &uuid) {
     // Reload the subvolumes list
     m_btrfs->subvolModel()->setIncludeSnapshots(m_ui->checkBox_subvolIncludeSnapshots->isChecked());
+    m_btrfs->subvolModel()->setIncludeDocker(m_ui->checkBox_subvolIncludeDocker->isChecked());
 
     // Remove this when https://gitlab.com/btrfs-assistant/btrfs-assistant/-/merge_requests/11 is merged!!
     m_btrfs->switchModelUuid(uuid);
@@ -469,7 +470,6 @@ void BtrfsAssistant::setup() {
         // Hide the btrfs maintenance tab
         m_ui->tabWidget->setTabVisible(m_ui->tabWidget->indexOf(m_ui->tab_btrfsmaintenance), false);
     }
-
 }
 
 void BtrfsAssistant::snapperTimelineEnable(bool enable) {
@@ -498,6 +498,11 @@ void BtrfsAssistant::on_checkBox_bmDefrag_clicked(bool checked) { m_ui->listWidg
 void BtrfsAssistant::on_checkBox_bmScrub_clicked(bool checked) { m_ui->listWidget_bmScrub->setDisabled(checked); }
 
 void BtrfsAssistant::on_checkBox_subvolIncludeSnapshots_clicked() {
+    m_btrfs->loadSubvols(m_ui->comboBox_btrfsDevice->currentText());
+    refreshSubvolListUi(m_ui->comboBox_btrfsDevice->currentText());
+}
+
+void BtrfsAssistant::on_checkBox_subvolIncludeDocker_clicked() {
     m_btrfs->loadSubvols(m_ui->comboBox_btrfsDevice->currentText());
     refreshSubvolListUi(m_ui->comboBox_btrfsDevice->currentText());
 }

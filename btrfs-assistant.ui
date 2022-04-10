@@ -444,8 +444,10 @@
         <string>Btrfs Subvolumes</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_23">
-        <item row="3" column="0">
-         <widget class="QCheckBox" name="checkBox_subvolIncludeSnapshots">
+        <item row="3" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_includeSubvolumes">
+<item>
+          <widget class="QCheckBox" name="checkBox_subvolIncludeSnapshots">
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Include children subvolumes of .snapshots and timeshift folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
@@ -456,8 +458,20 @@
            <bool>false</bool>
           </property>
          </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_subvolIncludeDocker">
+            <property name="text">
+             <string>Include Docker Subvolumes</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item row="0" column="3">
+        <item row="0" column="1">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string/>
