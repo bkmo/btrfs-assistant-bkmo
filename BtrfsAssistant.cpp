@@ -371,8 +371,6 @@ void BtrfsAssistant::refreshSubvolListUi() {
 
     // Update table sizes and columns based on subvolumes
     m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::Name, QHeaderView::Stretch);
-    m_ui->tableView_subvols->resizeColumnsToContents();
-    m_ui->tableView_subvols->resizeRowsToContents();
     m_ui->tableView_subvols->verticalHeader()->hide();
     m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Id);
     m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::ParentId);
@@ -449,6 +447,7 @@ void BtrfsAssistant::setup() {
     // Connect the subvolume view
     m_ui->tableView_subvols->setModel(m_subvolumeModel);
     m_ui->tableView_subvols->sortByColumn(SubvolumeModel::Column::Name, Qt::AscendingOrder);
+    m_ui->tableView_subvols->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Populate the UI
     refreshBtrfsUi();
