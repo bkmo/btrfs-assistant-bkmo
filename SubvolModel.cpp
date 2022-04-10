@@ -155,3 +155,194 @@ bool SubvolumeFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
 
     return true;
 }
+
+QModelIndex SubvolumeTreeModel::index(int row, int column, const QModelIndex &parent) const
+{
+    if (!m_root || !hasIndex(row, column, parent)) {
+        return QModelIndex();
+    }
+
+    Node *parentItem = parent.isValid() ?
+                           static_cast<Node *>(parent.internalPointer()) :
+                           m_root;
+
+    Node *childItem = parentItem->child(row);
+    if (childItem) {
+        return createIndex(row, column, childItem);
+    } else {
+        return QModelIndex();
+    }
+}
+
+QModelIndex SubvolumeTreeModel::parent(const QModelIndex &index) const
+{
+    if (!m_root|| !index.isValid())
+        return QModelIndex();
+
+    Node *childItem = static_cast<Node *>(index.internalPointer());
+    Node *parentItem = childItem->parent;
+
+    if (parentItem == m_root) {
+        return QModelIndex();
+    } else {
+        return createIndex(parentItem->row, 0, parentItem);
+    }
+}
+
+QVariant SubvolumeTreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
+    if (role != Qt::DisplayRole) {
+        return QAbstractItemModel::headerData(section, orientation, role);
+    }
+
+    if (orientation == Qt::Vertical) {
+        return section;
+    }
+
+    switch (section) {
+    case Column::ParentId:
+        return tr("Parent ID");
+    case Column::Id:
+        return tr("Subvol ID");
+    case Column::Name:
+        return tr("Subvolume");
+    case Column::Size:
+        return tr("Size");
+    case Column::Uuid:
+        return tr("UUID");
+    case Column::Exclusive:
+        return tr("Exclusive");
+    }
+
+    return QString();
+}
+
+int SubvolumeTreeModel::rowCount(const QModelIndex &parent) const
+{
+    if (!m_root || parent.column() > 0) {
+        return 0;
+    }
+
+    Node *parentItem = parent.isValid() ?
+                           static_cast<Node *>(parent.internalPointer()) :
+                           m_root;
+
+    return parentItem->children.size();
+}
+
+int SubvolumeTreeModel::columnCount(const QModelIndex &parent) const
+{
+    return Column::ColumnCount;
+}
+
+QVariant SubvolumeTreeModel::data(const QModelIndex &index, int role) const
+{
+    if (!m_root || !index.isValid() || index.column() >= Column::ColumnCount)
+        return QVariant();
+
+    QVariant ret;
+
+    if (role == Qt::TextAlignmentRole) {
+        switch (static_cast<Column>(index.column())) {
+        case Column::Id:
+        case Column::ParentId:
+        case Column::Name:
+        case Column::Uuid:
+            return {};
+        case Column::Size:
+        case Column::Exclusive:
+            return static_cast<int>(Qt::AlignRight | Qt::AlignVCenter);
+            break;
+        case Column::ColumnCount:
+            return {};
+        }
+    }
+
+    if (role != Qt::DisplayRole && role != Role::Sort && role != Qt::TextAlignmentRole) {
+        return QVariant();
+    }
+
+    const auto& subvol = static_cast<Node *>(index.internalPointer())->subvolume;
+    switch (index.column()) {
+    case Column::ParentId:
+        return subvol.parentId;
+    case Column::Id:
+        return subvol.subvolId;
+    case Column::Name:
+        return subvol.subvolName;
+    case Column::Size:
+        if (role == Qt::DisplayRole) {
+            return System::toHumanReadable(subvol.size);
+        } else {
+            return QVariant::fromValue<qulonglong>(subvol.size);
+        }
+    case Column::Exclusive:
+        if (role == Qt::DisplayRole) {
+            return System::toHumanReadable(subvol.exclusive);
+        } else {
+            return QVariant::fromValue<qulonglong>(subvol.exclusive);
+        }
+    case Column::Uuid:
+        return subvol.uuid;
+    }
+
+    return QVariant();
+}
+
+void SubvolumeTreeModel::loadModel(const QMap<int, Subvolume> &subvolData, const QMap<int, QVector<long> > &subvolSize)
+{
+    beginResetModel();
+    delete m_root;
+    m_root = new Node();
+    m_root->subvolume.subvolId = 5;
+
+    QList<Subvolume> subvolumes = subvolData.values();
+    std::sort(subvolumes.begin(), subvolumes.end(), [](const Subvolume& a, const Subvolume& b) {
+        if (a.parentId < b.parentId) {
+            return true;
+        } else if (a.parentId > b.parentId) {
+            return false;
+        } else {
+            return a.subvolId < b.subvolId;
+        }
+    });
+
+    const QList<int> keys = subvolData.keys();
+
+    for (const int key : keys) {
+        Subvolume subvol = subvolData[key];
+        if (subvolSize.contains(key) && subvolSize[key].count() == 2) {
+            subvol.size = subvolSize[key][0];
+            subvol.exclusive = subvolSize[key][1];
+        }
+        m_data.append(subvol);
+    }
+
+    endResetModel();
+}
+
+SubvolumeTreeModel::Node *SubvolumeTreeModel::findNode(Node *parent, int id)
+{
+    if (parent->subvolume.subvolId == id) {
+        return parent;
+    }
+
+    for (Node *c: parent->children) {
+        if (c->subvolume.subvolId == id) {
+            return c;
+        }
+    }
+}
+
+SubvolumeTreeModel::Node::~Node()
+{
+    qDeleteAll(children);
+}
+
+SubvolumeTreeModel::Node *SubvolumeTreeModel::Node::child(int row)
+{
+    if (row >= children.size()) {
+        return nullptr;
+    } else {
+        return children[row];
+    }
+}
