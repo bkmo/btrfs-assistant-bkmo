@@ -479,17 +479,6 @@
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_9">
                <item>
-                <widget class="QPushButton" name="pushButton_subvolDelete">
-                 <property name="text">
-                  <string>Delete Subvolume</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="icons.qrc">
-                   <normaloff>:/assets/assets/minus.png</normaloff>:/assets/assets/minus.png</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <spacer name="horizontalSpacer_9">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -503,13 +492,36 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_subvolRefresh">
+                <widget class="QToolButton" name="pushButton_subvolDelete">
+                 <property name="text">
+                  <string>Delete Subvolume</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="icons.qrc">
+                   <normaloff>:/assets/assets/minus.png</normaloff>:/assets/assets/minus.png</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextUnderIcon</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="pushButton_subvolRefresh">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>Refresh</string>
                  </property>
                  <property name="icon">
                   <iconset resource="icons.qrc">
                    <normaloff>:/assets/assets/reload.png</normaloff>:/assets/assets/reload.png</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextUnderIcon</enum>
                  </property>
                 </widget>
                </item>
