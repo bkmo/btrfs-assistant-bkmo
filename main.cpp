@@ -1,4 +1,5 @@
 #include "BtrfsAssistant.h"
+#include "BtrfsMaintenance.h"
 #include "Cli.h"
 #include "Settings.h"
 
@@ -6,6 +7,7 @@
 #include <QCommandLineParser>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QFile>
 #include <QTranslator>
 
 int main(int argc, char *argv[]) {

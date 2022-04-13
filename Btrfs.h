@@ -1,15 +1,8 @@
 #ifndef BTRFS_H
 #define BTRFS_H
 
-#include <QDir>
 #include <QMap>
 #include <QObject>
-#include <QRegularExpression>
-#include <QTime>
-
-#include "btrfsutil.h"
-
-#define MAX_PATH 4096
 
 struct RestoreResult {
     bool success = false;
