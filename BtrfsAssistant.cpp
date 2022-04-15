@@ -39,6 +39,8 @@ static void setListWidgetSelections(const QStringList &items, QListWidget *listW
 BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs, Snapper *snapper, QWidget *parent)
     : QMainWindow(parent), m_ui(new Ui::BtrfsAssistant), m_btrfs(btrfs), m_snapper(snapper), m_btrfsMaint(btrfsMaintenance) {
     m_ui->setupUi(this);
+    // Always start on the BTRFS tab, regardless what is the currentIndex in the .ui file
+    m_ui->tabWidget->setCurrentWidget(m_ui->tab_btrfs);
 
     // Ensure the application is running as root
     if (!System::checkRootUid()) {
