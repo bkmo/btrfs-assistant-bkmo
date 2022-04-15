@@ -50,11 +50,11 @@ add_executable(btrfs-assistant-bin
 )
 
 install(FILES ${FILES_TS} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/btrfs-assistant/translations)
-install(FILES data/btrfs-assistant.conf DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR})
-install(FILES data/btrfs-assistant.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
-install(FILES data/assets/btrfs-assistant.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/)
-install(FILES data/org.btrfs-assistant.pkexec.policy DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/polkit-1/actions/)
-install(PROGRAMS data/btrfs-assistant DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES data/install/btrfs-assistant.conf DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR})
+install(FILES data/install/btrfs-assistant.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+install(FILES data/install/assets/btrfs-assistant.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps/)
+install(FILES data/install/org.btrfs-assistant.pkexec.policy DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/polkit-1/actions/)
+install(PROGRAMS data/install/btrfs-assistant DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(TARGETS btrfs-assistant-bin RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 target_link_libraries(btrfs-assistant-bin PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${BTRFSUTIL_LIB})
