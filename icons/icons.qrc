@@ -6,5 +6,6 @@
     <file>minus.png</file>
     <file>reload.png</file>
     <file>btrfs-assistant.png</file>
+    <file>edit-clear.svg</file>
   </qresource>
 </RCC>
