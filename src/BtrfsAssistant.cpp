@@ -4,7 +4,7 @@
 #include "FileBrowser.h"
 #include "Settings.h"
 #include "Snapper.h"
-#include "SubvolModel.h"
+#include "models/SubvolModel.h"
 #include "System.h"
 #include "config.h"
 #include "ui_btrfs-assistant.h"
