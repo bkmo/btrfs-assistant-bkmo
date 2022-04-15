@@ -26,18 +26,17 @@ file(GLOB TS_FILES ${PROJECT_SOURCE_DIR}/translations/*.ts)
 configure_file(src/config.h.in config.h @ONLY)
 
 set(PROJECT_SOURCES
-        src/main.cpp
-        src/ui/btrfs-assistant.ui
         data/icons.qrc
         src/Btrfs.h src/Btrfs.cpp
-        src/BtrfsAssistant.h src/BtrfsAssistant.cpp
+        src/BtrfsAssistant.h src/BtrfsAssistant.cpp src/ui/btrfs-assistant.ui
         src/BtrfsMaintenance.h src/BtrfsMaintenance.cpp
         src/Cli.h src/Cli.cpp
         src/DiffViewer.h src/DiffViewer.cpp src/ui/DiffViewer.ui
         src/FileBrowser.h src/FileBrowser.cpp src/ui/FileBrowser.ui
+        src/main.cpp
+        src/models/SubvolModel.h src/models/SubvolModel.cpp
         src/Settings.h src/Settings.cpp
         src/Snapper.h src/Snapper.cpp
-        src/models/SubvolModel.h src/models/SubvolModel.cpp
         src/System.h src/System.cpp
         widgets/FilterLineEdit.h widgets/FilterLineEdit.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/config.h
