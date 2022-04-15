@@ -1,6 +1,6 @@
 #include "gui/BtrfsAssistant.h"
 #include "util/Btrfs.h"
-#include "gui/BtrfsMaintenance.h"
+#include "util/BtrfsMaintenance.h"
 #include "gui/FileBrowser.h"
 #include "config/Settings.h"
 #include "util/Snapper.h"
