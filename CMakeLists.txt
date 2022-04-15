@@ -23,11 +23,11 @@ add_subdirectory(src)
 add_subdirectory(icons)
 
 # Docs only available if this is the main app
-  find_package(Doxygen)
-  if(Doxygen_FOUND)
+find_package(Doxygen)
+if(Doxygen_FOUND)
     add_subdirectory(docs)
-  else()
+else()
     message(STATUS "Doxygen not found, not building docs")
-  endif()
+endif()
 
-  message(STATUS "Btrfs Assistant will be built for install into ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "Btrfs Assistant will be built for install into ${CMAKE_INSTALL_PREFIX}")
