@@ -23,10 +23,8 @@ find_library(BTRFSUTIL_LIB btrfsutil)
 
 file(GLOB TS_FILES ${PROJECT_SOURCE_DIR}/translations/*.ts)
 
-configure_file(src/config.h.in config.h @ONLY)
-
 set(PROJECT_SOURCES
-        data/icons.qrc
+        data/icons/icons.qrc
         src/Btrfs.h src/Btrfs.cpp
         src/BtrfsAssistant.h src/BtrfsAssistant.cpp src/ui/btrfs-assistant.ui
         src/BtrfsMaintenance.h src/BtrfsMaintenance.cpp
@@ -39,7 +37,6 @@ set(PROJECT_SOURCES
         src/Snapper.h src/Snapper.cpp
         src/System.h src/System.cpp
         widgets/FilterLineEdit.h widgets/FilterLineEdit.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 
 qt5_create_translation(FILES_TS ${PROJECT_SOURCES} ${TS_FILES})

@@ -6,7 +6,6 @@
 #include "Snapper.h"
 #include "models/SubvolModel.h"
 #include "System.h"
-#include "config.h"
 #include "ui_btrfs-assistant.h"
 
 #include <QDebug>
