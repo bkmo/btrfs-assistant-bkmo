@@ -53,6 +53,8 @@ BtrfsAssistant::BtrfsAssistant(BtrfsMaintenance *btrfsMaintenance, Btrfs *btrfs,
     m_sourceModel->load(m_btrfs->volumes());
     m_subvolumeModel = new SubvolumeFilterModel(this);
     m_subvolumeModel->setSourceModel(m_sourceModel);
+
+    connect(m_ui->lineEdit_subvolFilter, &QLineEdit::textEdited, m_subvolumeModel, &SubvolumeFilterModel::setFilterFixedString);
     connect(m_ui->checkBox_subvolIncludeSnapshots, &QCheckBox::toggled, m_subvolumeModel, &SubvolumeFilterModel::setIncludeSnapshots);
     connect(m_ui->checkBox_subvolIncludeContainer, &QCheckBox::toggled, m_subvolumeModel, &SubvolumeFilterModel::setIncludeContainer);
 
