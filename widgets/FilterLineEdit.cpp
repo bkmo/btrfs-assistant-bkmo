@@ -11,7 +11,6 @@ FilterLineEdit::FilterLineEdit(QWidget *parent) : QLineEdit(parent) {
     m_clearButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
     m_clearButton->hide();
 
-    // signals, clear lineEdit if btn pressed; change btn visibility on input
     connect(m_clearButton, &QToolButton::clicked, this, &FilterLineEdit::clear);
     connect(this, &FilterLineEdit::textChanged, this, &FilterLineEdit::updateButton);
 
