@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_btrfs">
        <attribute name="title">
@@ -527,7 +527,7 @@
                   <string>Delete</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/minus.png</normaloff>:/icons/minus.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -547,7 +547,7 @@
                   <string>Refresh</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/reload.png</normaloff>:/icons/reload.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -658,7 +658,7 @@
                   <string>New</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -678,7 +678,7 @@
                   <string>Delete</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/minus.png</normaloff>:/icons/minus.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -704,7 +704,7 @@
                   <string>Refresh</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/reload.png</normaloff>:/icons/reload.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -797,7 +797,7 @@
                   <string>Browse</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/filebrowse.png</normaloff>:/icons/filebrowse.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -817,7 +817,7 @@
                   <string>Restore</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/restore.png</normaloff>:/icons/restore.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -843,7 +843,7 @@
                   <string>Refresh</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../../data/icons/icons.qrc">
+                  <iconset resource="../../icons/icons.qrc">
                    <normaloff>:/icons/reload.png</normaloff>:/icons/reload.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
@@ -1614,7 +1614,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../data/icons/icons.qrc"/>
+  <include location="../../icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

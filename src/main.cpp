@@ -1,7 +1,7 @@
-#include "BtrfsAssistant.h"
-#include "BtrfsMaintenance.h"
-#include "Cli.h"
-#include "Settings.h"
+#include "gui/BtrfsAssistant.h"
+#include "gui/BtrfsMaintenance.h"
+#include "util/Cli.h"
+#include "config/Settings.h"
 
 #include <QApplication>
 #include <QCommandLineParser>

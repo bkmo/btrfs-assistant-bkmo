@@ -1,7 +1,7 @@
 #ifndef SUBVOLMODEL_H
 #define SUBVOLMODEL_H
 
-#include "src/Btrfs.h"
+#include "util/Btrfs.h"
 
 #include <QAbstractTableModel>
 #include <QMutex>

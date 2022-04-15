@@ -1,5 +1,5 @@
-#include "BtrfsMaintenance.h"
-#include "System.h"
+#include "gui/BtrfsMaintenance.h"
+#include "util/System.h"
 
 #include <QIODevice>
 #include <QSettings>

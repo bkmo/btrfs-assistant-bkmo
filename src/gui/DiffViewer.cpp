@@ -1,5 +1,5 @@
-#include "DiffViewer.h"
-#include "System.h"
+#include "gui/DiffViewer.h"
+#include "util/System.h"
 
 #include <QDialog>
 #include <QDir>
