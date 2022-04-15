@@ -1,5 +1,5 @@
 #include "util/Snapper.h"
-#include "config/Settings.h"
+#include "util/Settings.h"
 #include "util/System.h"
 
 #include <unistd.h>

@@ -1,5 +1,4 @@
-include(config/CMakeLists.txt)
-include(gui/CMakeLists.txt)
+include(ui/CMakeLists.txt)
 include(model/CMakeLists.txt)
 include(util/CMakeLists.txt)
 include(widgets/CMakeLists.txt)
@@ -7,16 +6,15 @@ include(widgets/CMakeLists.txt)
 set_property(SOURCE main.cpp APPEND PROPERTY COMPILE_DEFINITIONS "VERSION=\"1.5\"")
 
 set(btrfsassistant_SRCS
-	main.cpp
-	${CONFIG_SRC}
-	${GUI_SRC}
+        main.cpp
+        ${UI_SRC}
 	${MODEL_SRC}
         ${UTIL_SRC}
         ${WIDGETS_SRC}
         ${PROJECT_SOURCE_DIR}/icons/icons.qrc
 )
 
-file(GLOB btrfsassistant_UIFILES config/*.ui gui/*.ui)
+file(GLOB btrfsassistant_UIFILES ui/*.ui)
 file(GLOB TS_FILES ${PROJECT_SOURCE_DIR}/translations/*.ts)
 
 qt5_create_translation(FILES_TS ${btrfsassistant_UIFILES} ${TS_FILES})

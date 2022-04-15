@@ -1,5 +1,5 @@
 #include "util/Btrfs.h"
-#include "config/Settings.h"
+#include "util/Settings.h"
 #include "util/System.h"
 
 #include <QDebug>

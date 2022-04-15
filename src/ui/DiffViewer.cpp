@@ -1,4 +1,4 @@
-#include "gui/DiffViewer.h"
+#include "ui/DiffViewer.h"
 #include "util/System.h"
 
 #include <QDialog>
