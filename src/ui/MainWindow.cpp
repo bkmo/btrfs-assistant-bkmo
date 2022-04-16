@@ -433,7 +433,7 @@ void MainWindow::refreshSubvolListUi()
 
     // If there is only a single filesystem then hide the Uuid column
     if (m_ui->comboBox_btrfsDevice->count() == 1) {
-        m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Uuid);
+        m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::FilesystemUuid);
     }
 }
 
@@ -509,7 +509,8 @@ void MainWindow::setup()
     m_ui->tableView_subvols->setModel(m_subvolumeModel);
     m_ui->tableView_subvols->sortByColumn(SubvolumeModel::Column::Name, Qt::AscendingOrder);
     m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::Name, QHeaderView::Stretch);
-    m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::Uuid, QHeaderView::ResizeToContents);
+    m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::FilesystemUuid,
+                                                                      QHeaderView::ResizeToContents);
     m_ui->tableView_subvols->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Populate the UI
@@ -688,7 +689,7 @@ void MainWindow::on_pushButton_subvolDelete_clicked()
     }
     QModelIndexList indexes = m_ui->tableView_subvols->selectionModel()->selection().indexes();
     QString subvol = m_ui->tableView_subvols->model()->data(indexes.at(SubvolumeModel::Column::Name)).toString();
-    QString uuid = m_ui->tableView_subvols->model()->data(indexes.at(SubvolumeModel::Column::Uuid)).toString();
+    QString uuid = m_ui->tableView_subvols->model()->data(indexes.at(SubvolumeModel::Column::FilesystemUuid)).toString();
 
     // Make sure the everything is good in the UI
     if (subvol.isEmpty() || uuid.isEmpty()) {
