@@ -17,10 +17,22 @@ QVariant SubvolumeModel::headerData(int section, Qt::Orientation orientation, in
         return tr("Subvol ID");
     case Column::Name:
         return tr("Subvolume");
-    case Column::Size:
-        return tr("Size");
     case Column::Uuid:
         return tr("UUID");
+    case Column::ParentUuid:
+        return tr("Parent UUID");
+    case Column::ReceivedUuid:
+        return tr("Received UUID");
+    case Column::CreatedAt:
+        return tr("Created");
+    case Column::Generation:
+        return tr("Generation");
+    case Column::ReadOnly:
+        return tr("Read-only");
+    case Column::Size:
+        return tr("Size");
+    case Column::FilesystemUuid:
+        return tr("Filesystem");
     case Column::ExclusiveSize:
         return tr("Exclusive");
     }
@@ -53,11 +65,17 @@ QVariant SubvolumeModel::data(const QModelIndex &index, int role) const {
         case Column::ParentId:
         case Column::Name:
         case Column::Uuid:
+        case Column::ParentUuid:
+        case Column::ReceivedUuid:
+        case Column::FilesystemUuid:
             return {};
+        case Column::Generation:
         case Column::Size:
         case Column::ExclusiveSize:
             return static_cast<int>(Qt::AlignRight | Qt::AlignVCenter);
-            break;
+        case Column::CreatedAt:
+        case Column::ReadOnly:
+            return static_cast<int>(Qt::AlignCenter);
         case Column::ColumnCount:
             return {};
         }
@@ -72,9 +90,24 @@ QVariant SubvolumeModel::data(const QModelIndex &index, int role) const {
     case Column::ParentId:
         return QVariant::fromValue(subvol.parentId);
     case Column::Id:
-        return QVariant::fromValue(subvol.subvolId);
+        return QVariant::fromValue(subvol.id);
     case Column::Name:
         return subvol.subvolName;
+    case Column::Uuid:
+        return subvol.uuid;
+    case Column::ParentUuid:
+        return subvol.parentUuid;
+    case Column::ReceivedUuid:
+        return subvol.receivedUuid;
+    case Column::CreatedAt:
+        return subvol.createdAt;
+    case Column::Generation:
+        return QVariant::fromValue<qulonglong>(subvol.generation);
+    case Column::ReadOnly:
+        // We want an empty item instead of 'false' value
+        return subvol.isReadOnly() ? QVariant(true) : QVariant();
+    case Column::FilesystemUuid:
+        return subvol.filesystemUuid;
     case Column::Size:
         if (role == Qt::DisplayRole) {
             return System::toHumanReadable(subvol.size);
@@ -87,8 +120,6 @@ QVariant SubvolumeModel::data(const QModelIndex &index, int role) const {
         } else {
             return QVariant::fromValue<qulonglong>(subvol.exclusive);
         }
-    case Column::Uuid:
-        return subvol.uuid;
     }
 
     return QVariant();
@@ -106,7 +137,7 @@ void SubvolumeModel::load(const QMap<QString, BtrfsMeta> &volumeData) {
     // Extract all the subvolumes
     for (const QString &uuid : volumeIdentifiers) {
         for (const Subvolume &subvol : volumeData.value(uuid).subvolumes) {
-            if (subvol.subvolId != BTRFS_ROOT_ID && subvol.subvolId != 0) {
+            if (subvol.id != BTRFS_ROOT_ID && subvol.id != 0) {
                 m_data.append(subvol);
             }
         }

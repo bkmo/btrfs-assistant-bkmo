@@ -1,10 +1,11 @@
 #ifndef BTRFS_H
 #define BTRFS_H
 
+#include <QDateTime>
 #include <QMap>
 #include <QObject>
 
-#define BTRFS_ROOT_ID 5
+constexpr uint64_t BTRFS_ROOT_ID = 5;
 
 struct RestoreResult {
     bool success = false;
@@ -13,12 +14,27 @@ struct RestoreResult {
 };
 
 struct Subvolume {
+    uint64_t id = 0;
     uint64_t parentId = 0;
-    uint64_t subvolId = 0;
     QString subvolName;
     QString uuid;
+    QString parentUuid;
+    QString receivedUuid;
+    uint64_t generation = 0;
+    QString filesystemUuid;
     uint64_t size = 0;
     uint64_t exclusive = 0;
+    uint64_t flags = 0;
+    QDateTime createdAt;
+
+    /** @brief Returns if the subvolume is read-only. */
+    bool isReadOnly() const;
+
+    /** @brief Returns if the subvolume is a snapshot. */
+    bool isSnapshot() const;
+
+    /** @brief Returns if the subvolume was received. */
+    bool isReceived() const;
 };
 
 using SubvolumeMap = QMap<uint64_t, Subvolume>;
@@ -26,16 +42,16 @@ using SubvolumeMap = QMap<uint64_t, Subvolume>;
 struct BtrfsMeta {
     bool populated = false;
     QString mountPoint;
-    uint64_t totalSize;
-    uint64_t allocatedSize;
-    uint64_t usedSize;
-    uint64_t freeSize;
-    uint64_t dataSize;
-    uint64_t dataUsed;
-    uint64_t metaSize;
-    uint64_t metaUsed;
-    uint64_t sysSize;
-    uint64_t sysUsed;
+    uint64_t totalSize = 0;
+    uint64_t allocatedSize = 0;
+    uint64_t usedSize = 0;
+    uint64_t freeSize = 0;
+    uint64_t dataSize = 0;
+    uint64_t dataUsed = 0;
+    uint64_t metaSize = 0;
+    uint64_t metaUsed = 0;
+    uint64_t sysSize = 0;
+    uint64_t sysUsed = 0;
     SubvolumeMap subvolumes;
 };
 
