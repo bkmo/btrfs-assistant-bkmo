@@ -27,7 +27,7 @@ author = 'Dalto, Austin Horstman, Adam Sowa'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["breathe"]
+extensions = ["breathe", "exhale"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -51,4 +51,31 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 # Breathe Configuration
-breathe_default_project = "BtrfsAssistant"
+breathe_default_project = "Btrfs Assistant"
+
+# Setup the breathe extension
+breathe_projects = {
+    "Btrfs Assistant": "./_doxygen/xml"
+}
+
+# Setup the exhale extension
+exhale_args = {
+    # These arguments are required
+    "containmentFolder":     "./app",
+    "rootFileName":          "app_root.rst",
+    "doxygenStripFromPath":  "..",
+    # Heavily encouraged optional argument (see docs)
+    "rootFileTitle":         "Application Documentation",
+    # Suggested optional arguments
+    "createTreeView":        True,
+    # TIP: if using the sphinx-bootstrap-theme, you need
+    # "treeViewIsBootstrap": True,
+    "exhaleExecutesDoxygen": True,
+    "exhaleDoxygenStdin":    "INPUT = ../src"
+}
+
+# Tell sphinx what the primary language being documented is.
+primary_domain = 'cpp'
+
+# Tell sphinx what the pygments highlight language should be.
+highlight_language = 'cpp'
