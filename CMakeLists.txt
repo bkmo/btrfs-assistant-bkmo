@@ -28,12 +28,6 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 add_library (BtrfsAssistant ${PROJECT_SOURCES} ${FILES_TS})
 target_link_libraries(BtrfsAssistant PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${BTRFSUTIL_LIB})
 
-# Docs only available if this is the main app
-find_package(Doxygen)
-if(Doxygen_FOUND)
-    add_subdirectory(docs)
-else()
-    message(STATUS "Doxygen not found, not building docs")
-endif()
+add_subdirectory(docs)
 
 message(STATUS "Btrfs Assistant will be built for install into ${CMAKE_INSTALL_PREFIX}")
