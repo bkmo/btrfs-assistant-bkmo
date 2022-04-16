@@ -22,6 +22,12 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 add_subdirectory(src)
 add_subdirectory(icons)
 
+# Add the cmake folder so the FindSphinx module is found
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+add_library (BtrfsAssistant ${PROJECT_SOURCES} ${FILES_TS})
+target_link_libraries(BtrfsAssistant PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${BTRFSUTIL_LIB})
+
 # Docs only available if this is the main app
 find_package(Doxygen)
 if(Doxygen_FOUND)
