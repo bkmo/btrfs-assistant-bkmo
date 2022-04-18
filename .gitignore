@@ -55,3 +55,7 @@ compile_commands.json
 # Standard CMake build subdirectory
 /build
 
+# Doc creation dirs
+docs/_doxygen
+docs/app/*
+
