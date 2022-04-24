@@ -780,14 +780,16 @@ void MainWindow::on_pushButton_snapperRestore_clicked()
 
 void MainWindow::on_pushButton_snapperBrowse_clicked()
 {
-    QString target = m_ui->comboBox_snapperSubvols->currentText();
-    if (m_ui->tableWidget_snapperRestore->currentRow() == -1) {
+    const int currentRow = m_ui->tableWidget_snapperRestore->currentRow();
+    if (currentRow == -1) {
         displayError("You must select snapshot to browse!");
         return;
     }
 
-    QString subvolPath = m_ui->tableWidget_snapperRestore->item(m_ui->tableWidget_snapperRestore->currentRow(), 1)->text();
+    QString subvolPath = m_ui->tableWidget_snapperRestore->item(currentRow, 1)->text();
+    uint snapshotNumber = m_ui->tableWidget_snapperRestore->item(currentRow, 0)->data(Qt::DisplayRole).toUInt();
 
+    QString target = m_ui->comboBox_snapperSubvols->currentText();
     QVector<SnapperSubvolume> snapperSubvols = m_snapper->subvols(target);
 
     // This shouldn't be possible but check anyway
@@ -801,8 +803,11 @@ void MainWindow::on_pushButton_snapperBrowse_clicked()
     // We need to mount the root so we can browse from there
     const QString mountpoint = m_btrfs->mountRoot(uuid);
 
-    FileBrowser fb(m_snapper, QDir::cleanPath(mountpoint + QDir::separator() + subvolPath), uuid);
-    fb.exec();
+    auto fb = new FileBrowser(m_snapper, QDir::cleanPath(mountpoint + QDir::separator() + subvolPath), uuid, this);
+    // Prefix the window title with target and snapshot number, so user can make sense of multiple windows
+    fb->setWindowTitle(QString("%1:%2 - %3").arg(target).arg(snapshotNumber).arg(fb->windowTitle()));
+    fb->setAttribute(Qt::WA_DeleteOnClose, true);
+    fb->show();
 }
 
 void MainWindow::on_pushButton_snapperCreate_clicked()
