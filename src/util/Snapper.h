@@ -7,12 +7,12 @@
 #include "Btrfs.h"
 
 struct SnapperResult {
-    int exitCode = 0;
+    int exitCode = -1;
     QStringList outputList;
 };
 
-struct SnapperSnapshots {
-    int number = 0;
+struct SnapperSnapshot {
+    uint number = 0;
     QDateTime time;
     QString desc;
     QString type;
@@ -133,7 +133,7 @@ class Snapper : public QObject {
      * @param filename - The absolute path to the meta file to read
      * @return A SnapperSnapshots struct with the values from the file
      */
-    static SnapperSnapshots readSnapperMeta(const QString &filename);
+    static SnapperSnapshot readSnapperMeta(const QString &filename);
 
     /**
      * @brief Restores a single file identified by @p filePath to it's original location
@@ -165,7 +165,7 @@ class Snapper : public QObject {
      * @param config - The name of the Snapper config to list
      * @return A QVector of SnapperShots for each snapshot
      */
-    QVector<SnapperSnapshots> snapshots(const QString &config);
+    QVector<SnapperSnapshot> snapshots(const QString &config);
 
     /**
      * @brief Gets the list of targets where a Snapper snapshot can be restored to
@@ -189,7 +189,7 @@ class Snapper : public QObject {
     QString m_snapperCommand;
 
     // A map of snapper snapshots.  The key is the snapper config name
-    QMap<QString, QVector<SnapperSnapshots>> m_snapshots;
+    QMap<QString, QVector<SnapperSnapshot>> m_snapshots;
 
     // A map of btrfs subvolumes that hold snapper snapshots.  The key is the target subvol.
     QMap<QString, QVector<SnapperSubvolume>> m_subvols;

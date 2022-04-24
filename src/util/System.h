@@ -6,7 +6,7 @@
 
 // Stores the results from runCmd
 struct Result {
-    int exitCode = 0;
+    int exitCode = -1;
     QString output;
 };
 

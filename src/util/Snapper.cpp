@@ -163,7 +163,7 @@ void Snapper::load()
 
         for (const QString &snap : qAsConst(listResult.outputList)) {
             const QStringList &cols = snap.split(',');
-            m_snapshots[name].append({cols.at(0).trimmed().toInt(), QDateTime::fromString(cols.at(1).trimmed(), Qt::ISODate),
+            m_snapshots[name].append({cols.at(0).trimmed().toUInt(), QDateTime::fromString(cols.at(1).trimmed(), Qt::ISODate),
                                       cols.at(2).trimmed(), cols.at(3).trimmed()});
         }
     }
@@ -236,7 +236,7 @@ void Snapper::loadSubvols()
 
             filename = QDir::cleanPath(mountpoint + QDir::separator() + filename);
 
-            SnapperSnapshots snap = readSnapperMeta(filename);
+            SnapperSnapshot snap = readSnapperMeta(filename);
 
             if (snap.number == 0) {
                 continue;
@@ -272,9 +272,9 @@ void Snapper::loadSubvols()
     createSubvolMap();
 }
 
-SnapperSnapshots Snapper::readSnapperMeta(const QString &filename)
+SnapperSnapshot Snapper::readSnapperMeta(const QString &filename)
 {
-    SnapperSnapshots snap;
+    SnapperSnapshot snap;
     QFile metaFile(filename);
 
     if (metaFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -413,12 +413,12 @@ SnapperResult Snapper::setConfig(const QString &name, const ConfigMap &configMap
     return result;
 }
 
-QVector<SnapperSnapshots> Snapper::snapshots(const QString &config)
+QVector<SnapperSnapshot> Snapper::snapshots(const QString &config)
 {
     if (m_snapshots.contains(config)) {
         return m_snapshots[config];
     } else {
-        return QVector<SnapperSnapshots>();
+        return QVector<SnapperSnapshot>();
     }
 }
 

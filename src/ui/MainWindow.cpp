@@ -293,7 +293,7 @@ void MainWindow::populateSnapperGrid()
     m_ui->tableWidget_snapperNew->setSortingEnabled(false);
 
     // Make sure there is something to populate
-    QVector<SnapperSnapshots> snapshots = m_snapper->snapshots(config);
+    QVector<SnapperSnapshot> snapshots = m_snapper->snapshots(config);
     if (snapshots.isEmpty()) {
         return;
     }
@@ -302,7 +302,7 @@ void MainWindow::populateSnapperGrid()
     m_ui->tableWidget_snapperNew->setRowCount(snapshots.size());
     for (int i = 0; i < snapshots.size(); i++) {
         // Ensure proper sorting of numbers and dates
-        QTableWidgetItem *number = new QTableWidgetItem(snapshots.at(i).number);
+        QTableWidgetItem *number = new QTableWidgetItem(static_cast<int>(snapshots.at(i).number));
         number->setData(Qt::DisplayRole, snapshots.at(i).number);
         QTableWidgetItem *snapTime = new QTableWidgetItem(locale.toString(snapshots.at(i).time, QLocale::ShortFormat));
         snapTime->setData(Qt::DisplayRole, snapshots.at(i).time);
@@ -348,18 +348,18 @@ void MainWindow::populateSnapperRestoreGrid()
     // Populate the table
     m_ui->tableWidget_snapperRestore->setRowCount(subvols.count());
     for (int i = 0; i < subvols.count(); i++) {
-        const SnapperSubvolume &s = subvols.at(i);
+        const SnapperSubvolume &subvolume = subvols.at(i);
         // Ensure proper sorting of numbers and dates
         QTableWidgetItem *number = new QTableWidgetItem();
-        number->setData(Qt::DisplayRole, s.snapshotNum);
-        QTableWidgetItem *snapTime = new QTableWidgetItem(locale.toString(s.time, QLocale::ShortFormat));
-        snapTime->setData(Qt::DisplayRole, s.time);
+        number->setData(Qt::DisplayRole, subvolume.snapshotNum);
+        QTableWidgetItem *snapTime = new QTableWidgetItem(locale.toString(subvolume.time, QLocale::ShortFormat));
+        snapTime->setData(Qt::DisplayRole, subvolume.time);
 
         m_ui->tableWidget_snapperRestore->setItem(i, 0, number);
-        m_ui->tableWidget_snapperRestore->setItem(i, 1, new QTableWidgetItem(s.subvol));
+        m_ui->tableWidget_snapperRestore->setItem(i, 1, new QTableWidgetItem(subvolume.subvol));
         m_ui->tableWidget_snapperRestore->setItem(i, 2, snapTime);
-        m_ui->tableWidget_snapperRestore->setItem(i, 3, new QTableWidgetItem(s.type));
-        m_ui->tableWidget_snapperRestore->setItem(i, 4, new QTableWidgetItem(s.desc));
+        m_ui->tableWidget_snapperRestore->setItem(i, 3, new QTableWidgetItem(subvolume.type));
+        m_ui->tableWidget_snapperRestore->setItem(i, 4, new QTableWidgetItem(subvolume.desc));
     }
 
     // Re-enable sorting and resize the colums to make everything fit
