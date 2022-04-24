@@ -96,7 +96,7 @@ QString Snapper::findTargetSubvol(const QString &snapshotSubvol, const QString &
 
 void Snapper::load()
 {
-    // Load the list  of valid configs
+    // Load the list of valid configs
     m_configs.clear();
     m_snapshots.clear();
     const SnapperResult result = runSnapper("list-configs --columns config");
