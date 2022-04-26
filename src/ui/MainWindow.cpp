@@ -40,7 +40,7 @@ MainWindow::MainWindow(Btrfs *btrfs, BtrfsMaintenance *btrfsMaintenance, Snapper
 {
     m_ui->setupUi(this);
     // Always start on the BTRFS tab, regardless what is the currentIndex in the .ui file
-    m_ui->tabWidget->setCurrentWidget(m_ui->tab_btrfs);
+    m_ui->tabWidget_mainWindow->setCurrentWidget(m_ui->tab_btrfs);
 
     // Ensure the application is running as root
     if (!System::checkRootUid()) {
@@ -73,6 +73,55 @@ MainWindow::MainWindow(Btrfs *btrfs, BtrfsMaintenance *btrfsMaintenance, Snapper
 MainWindow::~MainWindow() { delete m_ui; }
 
 void MainWindow::displayError(const QString &errorText) { QMessageBox::critical(this, tr("Error"), errorText); }
+
+void MainWindow::bmRefreshMountpoints()
+{
+    // Get updated list of mountpoints
+    const QStringList mountpoints = Btrfs::listMountpoints();
+
+    // Populate the balance section
+    QStringList balanceMounts;
+    foreach (QListWidgetItem *item, m_ui->listWidget_bmBalance->selectedItems()) {
+        balanceMounts << item->text();
+    }
+    m_ui->listWidget_bmBalance->clear();
+    m_ui->listWidget_bmBalance->insertItems(0, mountpoints);
+
+    if (!m_ui->checkBox_bmBalance->isChecked()) {
+        setListWidgetSelections(balanceMounts, m_ui->listWidget_bmBalance);
+    }
+
+    // Populate the scrub section
+    QStringList scrubMounts;
+    foreach (QListWidgetItem *item, m_ui->listWidget_bmScrub->selectedItems()) {
+        scrubMounts << item->text();
+    }
+    m_ui->listWidget_bmScrub->clear();
+    m_ui->listWidget_bmScrub->insertItems(0, mountpoints);
+
+    if (!m_ui->checkBox_bmScrub->isChecked()) {
+        setListWidgetSelections(scrubMounts, m_ui->listWidget_bmScrub);
+    }
+
+    // Populate the defrag section
+    QStringList defragMounts;
+    foreach (QListWidgetItem *item, m_ui->listWidget_bmDefrag->selectedItems()) {
+        defragMounts << item->text();
+    }
+
+    // In the case of defrag we need to include any nested subvols listed in the config
+    QStringList combinedMountpoints = defragMounts + mountpoints;
+
+    // Remove empty and duplicate entries
+    combinedMountpoints.removeAll(QString());
+    combinedMountpoints.removeDuplicates();
+
+    m_ui->listWidget_bmDefrag->clear();
+    m_ui->listWidget_bmDefrag->insertItems(0, combinedMountpoints);
+    if (!m_ui->checkBox_bmDefrag->isChecked()) {
+        setListWidgetSelections(defragMounts, m_ui->listWidget_bmDefrag);
+    }
+}
 
 void MainWindow::btrfsBalanceStatusUpdateUI()
 {
@@ -375,6 +424,12 @@ void MainWindow::populateSnapperRestoreGrid()
     m_ui->tableWidget_snapperRestore->resizeColumnsToContents();
 }
 
+void MainWindow::refreshBmUi()
+{
+    // Refresh the mountpoint list widgets
+    bmRefreshMountpoints();
+}
+
 void MainWindow::refreshBtrfsUi()
 {
 
@@ -496,8 +551,8 @@ void MainWindow::setup()
     if (m_hasSnapper) {
         m_ui->groupBox_snapperConfigEdit->hide();
     } else {
-        m_ui->tabWidget->setTabVisible(m_ui->tabWidget->indexOf(m_ui->tab_snapper_general), false);
-        m_ui->tabWidget->setTabVisible(m_ui->tabWidget->indexOf(m_ui->tab_snapper_settings), false);
+        m_ui->tabWidget_mainWindow->setTabVisible(m_ui->tabWidget_mainWindow->indexOf(m_ui->tab_snapper_general), false);
+        m_ui->tabWidget_mainWindow->setTabVisible(m_ui->tabWidget_mainWindow->indexOf(m_ui->tab_snapper_settings), false);
     }
 
     // If the system isn't running systemd, hide the systemd-related elements of the UI
@@ -530,7 +585,7 @@ void MainWindow::setup()
         populateBmTab();
     } else {
         // Hide the btrfs maintenance tab
-        m_ui->tabWidget->setTabVisible(m_ui->tabWidget->indexOf(m_ui->tab_btrfsmaintenance), false);
+        m_ui->tabWidget_mainWindow->setTabVisible(m_ui->tabWidget_mainWindow->indexOf(m_ui->tab_btrfsmaintenance), false);
     }
 }
 
@@ -650,8 +705,6 @@ void MainWindow::on_toolButton_bmApply_clicked()
 
     m_ui->toolButton_bmApply->clearFocus();
 }
-
-void MainWindow::on_toolButton_bmRefresh_clicked() { this->populateBmTab(); }
 
 void MainWindow::on_pushButton_btrfsBalance_clicked()
 {
@@ -1084,6 +1137,13 @@ void MainWindow::on_pushButton_enableQuota_clicked()
     }
 
     setEnableQuotaButtonStatus();
+}
+
+void MainWindow::on_tabWidget_mainWindow_currentChanged()
+{
+    if (m_ui->tabWidget_mainWindow->currentIndex() == m_ui->tabWidget_mainWindow->indexOf(m_ui->tab_btrfsmaintenance)) {
+        refreshBmUi();
+    }
 }
 
 void MainWindow::on_toolButton_snapperNewRefresh_clicked()

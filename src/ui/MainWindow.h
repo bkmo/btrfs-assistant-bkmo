@@ -108,6 +108,11 @@ class MainWindow : public QMainWindow {
     void refreshBtrfsUi();
 
     /**
+     * @brief Refresh the Btrfs Maintenance tab UI.
+     */
+    void refreshBmUi();
+
+    /**
      * @brief Update the UI on Snapper Settings based on systems enabled units.
      */
     void refreshSnapperServices();
@@ -136,6 +141,11 @@ class MainWindow : public QMainWindow {
      * @param checkboxList
      */
     void updateServices(QList<QCheckBox *>);
+
+    /**
+     * @brief Refreshes the mountpoint list widgets on Btrfs Maintenance while maintaining any previous selections.
+     */
+    void bmRefreshMountpoints();
 
     /**
      * @brief Method used to fetch and update the btrfs balance status
@@ -215,10 +225,6 @@ class MainWindow : public QMainWindow {
     void on_toolButton_bmApply_clicked();
 
     /**
-     * @brief Repopulates the Btrfs Maintenance tab.
-     */
-    void on_toolButton_bmRefresh_clicked();
-    /**
      * @brief Delete a subvolume after checking for a variety of errors
      */
     void on_toolButton_subvolDelete_clicked();
@@ -276,7 +282,19 @@ class MainWindow : public QMainWindow {
      */
     void on_pushButton_snapperUnitsApply_clicked();
 
+    /**
+     * @brief Mainwindow tab selection change event handler.
+     */
+    void on_tabWidget_mainWindow_currentChanged();
+
+    /**
+     * @brief Snapper New/Delete Refresh button handler.
+     */
     void on_toolButton_snapperNewRefresh_clicked();
+
+    /**
+     * @brief Snapper Browse/Restore Refresh button handler.
+     */
     void on_toolButton_snapperRestoreRefresh_clicked();
 };
 #endif // MAINWINDOW_H
