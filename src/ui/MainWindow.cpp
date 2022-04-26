@@ -421,6 +421,10 @@ void MainWindow::refreshSubvolListUi()
     m_ui->tableView_subvols->verticalHeader()->hide();
     m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Id);
     m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::ParentId);
+    m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Uuid);
+    m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::ParentUuid);
+    m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::ReceivedUuid);
+    m_ui->tableView_subvols->hideColumn(SubvolumeModel::Column::Generation);
 
     // Hide quota data if no columns supported it
     if (!showQuota) {
@@ -511,6 +515,8 @@ void MainWindow::setup()
     m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::Name, QHeaderView::Stretch);
     m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::FilesystemUuid,
                                                                       QHeaderView::ResizeToContents);
+    m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::CreatedAt, QHeaderView::ResizeToContents);
+    m_ui->tableView_subvols->horizontalHeader()->setSectionResizeMode(SubvolumeModel::Column::ReadOnly, QHeaderView::ResizeToContents);
     m_ui->tableView_subvols->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     // Populate the UI
