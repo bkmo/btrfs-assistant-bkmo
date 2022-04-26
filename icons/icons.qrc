@@ -8,5 +8,6 @@
         <file>edit-clear.svg</file>
         <file>folder.png</file>
         <file>checkmark.png</file>
+        <file>folder.png</file>
     </qresource>
 </RCC>
