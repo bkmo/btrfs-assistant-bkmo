@@ -681,11 +681,11 @@ void MainWindow::on_pushButton_btrfsScrub_clicked()
     }
 }
 
-void MainWindow::on_pushButton_subvolDelete_clicked()
+void MainWindow::on_toolButton_subvolDelete_clicked()
 {
     if (!m_ui->tableView_subvols->selectionModel()->hasSelection()) {
         displayError(tr("Please select a subvolume to delete first!"));
-        m_ui->pushButton_subvolDelete->clearFocus();
+        m_ui->toolButton_subvolDelete->clearFocus();
         return;
     }
     QModelIndexList indexes = m_ui->tableView_subvols->selectionModel()->selection().indexes();
@@ -695,7 +695,7 @@ void MainWindow::on_pushButton_subvolDelete_clicked()
     // Make sure the everything is good in the UI
     if (subvol.isEmpty() || uuid.isEmpty()) {
         displayError(tr("Nothing to delete!"));
-        m_ui->pushButton_subvolDelete->clearFocus();
+        m_ui->toolButton_subvolDelete->clearFocus();
         return;
     }
 
@@ -703,14 +703,14 @@ void MainWindow::on_pushButton_subvolDelete_clicked()
     uint64_t subvolid = m_btrfs->subvolId(uuid, subvol);
     if (subvolid == 0) {
         displayError(tr("Failed to delete subvolume!") + "\n\n" + tr("subvolid missing from map"));
-        m_ui->pushButton_subvolDelete->clearFocus();
+        m_ui->toolButton_subvolDelete->clearFocus();
         return;
     }
 
     // ensure the subvol isn't mounted, btrfs will delete a mounted subvol but we probably shouldn't
     if (Btrfs::isMounted(uuid, subvolid)) {
         displayError(tr("You cannot delete a mounted subvolume") + "\n\n" + tr("Please unmount the subvolume before continuing"));
-        m_ui->pushButton_subvolDelete->clearFocus();
+        m_ui->toolButton_subvolDelete->clearFocus();
         return;
     }
 
@@ -738,7 +738,7 @@ void MainWindow::on_pushButton_subvolDelete_clicked()
         displayError(tr("Failed to delete subvolume " + subvol.toUtf8()));
     }
 
-    m_ui->pushButton_subvolDelete->clearFocus();
+    m_ui->toolButton_subvolDelete->clearFocus();
 }
 
 void MainWindow::on_pushButton_btrfsRefreshData_clicked()
@@ -750,7 +750,7 @@ void MainWindow::on_pushButton_btrfsRefreshData_clicked()
     m_ui->pushButton_btrfsRefreshData->clearFocus();
 }
 
-void MainWindow::on_pushButton_subvolRefresh_clicked()
+void MainWindow::on_toolButton_subvolRefresh_clicked()
 {
     const auto filesystems = m_btrfs->listFilesystems();
     for (const QString &uuid : filesystems) {
@@ -760,10 +760,10 @@ void MainWindow::on_pushButton_subvolRefresh_clicked()
     m_sourceModel->load(m_btrfs->filesystems());
     refreshSubvolListUi();
 
-    m_ui->pushButton_subvolRefresh->clearFocus();
+    m_ui->toolButton_subvolRefresh->clearFocus();
 }
 
-void MainWindow::on_pushButton_snapperRestore_clicked()
+void MainWindow::on_toolButton_snapperRestore_clicked()
 {
     if (m_ui->tableWidget_snapperRestore->currentRow() == -1) {
         displayError(tr("Nothing selected!"));
@@ -788,10 +788,10 @@ void MainWindow::on_pushButton_snapperRestore_clicked()
 
     restoreSnapshot(uuid, subvol);
 
-    m_ui->pushButton_snapperRestore->clearFocus();
+    m_ui->toolButton_snapperRestore->clearFocus();
 }
 
-void MainWindow::on_pushButton_snapperBrowse_clicked()
+void MainWindow::on_toolButton_snapperBrowse_clicked()
 {
     const int currentRow = m_ui->tableWidget_snapperRestore->currentRow();
     if (currentRow == -1) {
@@ -824,7 +824,7 @@ void MainWindow::on_pushButton_snapperBrowse_clicked()
     fb->show();
 }
 
-void MainWindow::on_pushButton_snapperCreate_clicked()
+void MainWindow::on_toolButton_snapperCreate_clicked()
 {
     QString config = m_ui->comboBox_snapperConfigs->currentText();
 
@@ -860,10 +860,10 @@ void MainWindow::on_pushButton_snapperCreate_clicked()
     populateSnapperGrid();
     populateSnapperRestoreGrid();
 
-    m_ui->pushButton_snapperCreate->clearFocus();
+    m_ui->toolButton_snapperCreate->clearFocus();
 }
 
-void MainWindow::on_pushButton_snapperDelete_clicked()
+void MainWindow::on_toolButton_snapperDelete_clicked()
 {
     if (m_ui->tableWidget_snapperNew->currentRow() == -1) {
         displayError(tr("Nothing selected!"));
@@ -908,7 +908,7 @@ void MainWindow::on_pushButton_snapperDelete_clicked()
     populateSnapperGrid();
     populateSnapperRestoreGrid();
 
-    m_ui->pushButton_snapperDelete->clearFocus();
+    m_ui->toolButton_snapperDelete->clearFocus();
 }
 
 void MainWindow::on_pushButton_snapperDeleteConfig_clicked()

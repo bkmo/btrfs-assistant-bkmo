@@ -221,7 +221,7 @@ class MainWindow : public QMainWindow {
     /**
      * @brief Delete a subvolume after checking for a variety of errors
      */
-    void on_pushButton_subvolDelete_clicked();
+    void on_toolButton_subvolDelete_clicked();
 
     /**
      * @brief Refreshes Btrfs data button handler
@@ -231,27 +231,27 @@ class MainWindow : public QMainWindow {
     /**
      * @brief Refreshes subvolume data button handler
      */
-    void on_pushButton_subvolRefresh_clicked();
+    void on_toolButton_subvolRefresh_clicked();
 
     /**
      * @brief Restore snapshot button handler
      */
-    void on_pushButton_snapperRestore_clicked();
+    void on_toolButton_snapperRestore_clicked();
 
     /**
      * @brief Snapper browse snapshot button handler
      */
-    void on_pushButton_snapperBrowse_clicked();
+    void on_toolButton_snapperBrowse_clicked();
 
     /**
      * @brief Snapper new snapshot button handler
      */
-    void on_pushButton_snapperCreate_clicked();
+    void on_toolButton_snapperCreate_clicked();
 
     /**
      * @brief Snapper delete snapshot button handler
      */
-    void on_pushButton_snapperDelete_clicked();
+    void on_toolButton_snapperDelete_clicked();
 
     /**
      * @brief Snapper new config button handler

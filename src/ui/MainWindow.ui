@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_btrfs">
        <attribute name="title">
@@ -516,7 +516,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QToolButton" name="pushButton_subvolDelete">
+                <widget class="QToolButton" name="toolButton_subvolDelete">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
@@ -536,7 +536,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="pushButton_subvolRefresh">
+                <widget class="QToolButton" name="toolButton_subvolRefresh">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
@@ -647,7 +647,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QToolButton" name="pushButton_snapperCreate">
+                <widget class="QToolButton" name="toolButton_snapperCreate">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
@@ -667,7 +667,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="pushButton_snapperDelete">
+                <widget class="QToolButton" name="toolButton_snapperDelete">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
@@ -780,7 +780,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QToolButton" name="pushButton_snapperBrowse">
+                <widget class="QToolButton" name="toolButton_snapperBrowse">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -806,7 +806,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QToolButton" name="pushButton_snapperRestore">
+                <widget class="QToolButton" name="toolButton_snapperRestore">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
