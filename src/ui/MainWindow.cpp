@@ -215,6 +215,7 @@ void MainWindow::populateBmTab()
         m_ui->listWidget_bmBalance->setDisabled(true);
     } else {
         m_ui->checkBox_bmBalance->setChecked(false);
+        m_ui->listWidget_bmBalance->setDisabled(false);
         setListWidgetSelections(balanceMounts, m_ui->listWidget_bmBalance);
     }
 
@@ -227,6 +228,7 @@ void MainWindow::populateBmTab()
         m_ui->listWidget_bmScrub->setDisabled(true);
     } else {
         m_ui->checkBox_bmScrub->setChecked(false);
+        m_ui->listWidget_bmScrub->setDisabled(false);
         setListWidgetSelections(scrubMounts, m_ui->listWidget_bmScrub);
     }
 
@@ -247,6 +249,7 @@ void MainWindow::populateBmTab()
         m_ui->listWidget_bmDefrag->setDisabled(true);
     } else {
         m_ui->checkBox_bmDefrag->setChecked(false);
+        m_ui->listWidget_bmDefrag->setDisabled(false);
         setListWidgetSelections(defragMounts, m_ui->listWidget_bmDefrag);
     }
 }
@@ -705,6 +708,8 @@ void MainWindow::on_toolButton_bmApply_clicked()
 
     m_ui->toolButton_bmApply->clearFocus();
 }
+
+void MainWindow::on_toolButton_bmReset_clicked() { populateBmTab(); }
 
 void MainWindow::on_pushButton_btrfsBalance_clicked()
 {

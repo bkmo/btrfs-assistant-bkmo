@@ -225,6 +225,10 @@ class MainWindow : public QMainWindow {
     void on_toolButton_bmApply_clicked();
 
     /**
+     * @brief Reset the btrfs maintenance screen to saved values.
+     */
+    void on_toolButton_bmReset_clicked();
+    /**
      * @brief Delete a subvolume after checking for a variety of errors
      */
     void on_toolButton_subvolDelete_clicked();
