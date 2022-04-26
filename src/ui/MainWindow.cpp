@@ -81,9 +81,11 @@ void MainWindow::bmRefreshMountpoints()
 
     // Populate the balance section
     QStringList balanceMounts;
-    foreach (QListWidgetItem *item, m_ui->listWidget_bmBalance->selectedItems()) {
+    const QList<QListWidgetItem *> selectedBalanceMounts = m_ui->listWidget_bmBalance->selectedItems();
+    for (QListWidgetItem *item : selectedBalanceMounts) {
         balanceMounts << item->text();
     }
+
     m_ui->listWidget_bmBalance->clear();
     m_ui->listWidget_bmBalance->insertItems(0, mountpoints);
 
@@ -93,7 +95,8 @@ void MainWindow::bmRefreshMountpoints()
 
     // Populate the scrub section
     QStringList scrubMounts;
-    foreach (QListWidgetItem *item, m_ui->listWidget_bmScrub->selectedItems()) {
+    const QList<QListWidgetItem *> selectedScrubMounts = m_ui->listWidget_bmScrub->selectedItems();
+    for (QListWidgetItem *item : selectedScrubMounts) {
         scrubMounts << item->text();
     }
     m_ui->listWidget_bmScrub->clear();
@@ -105,7 +108,8 @@ void MainWindow::bmRefreshMountpoints()
 
     // Populate the defrag section
     QStringList defragMounts;
-    foreach (QListWidgetItem *item, m_ui->listWidget_bmDefrag->selectedItems()) {
+    const QList<QListWidgetItem *> selectedDefragMounts = m_ui->listWidget_bmDefrag->selectedItems();
+    for (QListWidgetItem *item : selectedDefragMounts) {
         defragMounts << item->text();
     }
 
@@ -113,7 +117,7 @@ void MainWindow::bmRefreshMountpoints()
     QStringList combinedMountpoints = defragMounts + mountpoints;
 
     // Remove empty and duplicate entries
-    combinedMountpoints.removeAll(QString());
+    combinedMountpoints.removeAll("");
     combinedMountpoints.removeDuplicates();
 
     m_ui->listWidget_bmDefrag->clear();
@@ -1146,7 +1150,7 @@ void MainWindow::on_pushButton_enableQuota_clicked()
 
 void MainWindow::on_tabWidget_mainWindow_currentChanged()
 {
-    if (m_ui->tabWidget_mainWindow->currentIndex() == m_ui->tabWidget_mainWindow->indexOf(m_ui->tab_btrfsmaintenance)) {
+    if (m_ui->tabWidget_mainWindow->currentWidget() == m_ui->tab_btrfsmaintenance) {
         refreshBmUi();
     }
 }
