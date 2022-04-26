@@ -1604,7 +1604,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../../icons/icons.qrc">
-                   <normaloff>:/icons/reload.png</normaloff>:/icons/reload.png</iconset>
+                   <normaloff>:/icons/reset.png</normaloff>:/icons/reset.png</iconset>
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextUnderIcon</enum>

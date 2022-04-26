@@ -9,5 +9,6 @@
         <file>folder.png</file>
         <file>checkmark.png</file>
         <file>folder.png</file>
+        <file>reset.png</file>
     </qresource>
 </RCC>
