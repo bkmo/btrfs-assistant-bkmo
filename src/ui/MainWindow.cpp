@@ -600,7 +600,7 @@ void MainWindow::on_comboBox_snapperSubvols_activated(int index)
     m_ui->comboBox_snapperSubvols->clearFocus();
 }
 
-void MainWindow::on_pushButton_bmApply_clicked()
+void MainWindow::on_toolButton_bmApply_clicked()
 {
     // Read and set the Btrfs maintenance settings
     m_btrfsMaint->setValue("BTRFS_BALANCE_PERIOD", m_ui->comboBox_bmBalanceFreq->currentText());
@@ -648,8 +648,10 @@ void MainWindow::on_pushButton_bmApply_clicked()
 
     QMessageBox::information(0, tr("Btrfs Assistant"), tr("Changes applied"));
 
-    m_ui->pushButton_bmApply->clearFocus();
+    m_ui->toolButton_bmApply->clearFocus();
 }
+
+void MainWindow::on_toolButton_bmRefresh_clicked() { this->populateBmTab(); }
 
 void MainWindow::on_pushButton_btrfsBalance_clicked()
 {

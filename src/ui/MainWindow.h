@@ -212,8 +212,12 @@ class MainWindow : public QMainWindow {
     /**
      * @brief Apply btrfs maintenance system settings based on the UI state.
      */
-    void on_pushButton_bmApply_clicked();
+    void on_toolButton_bmApply_clicked();
 
+    /**
+     * @brief Repopulates the Btrfs Maintenance tab.
+     */
+    void on_toolButton_bmRefresh_clicked();
     /**
      * @brief Delete a subvolume after checking for a variety of errors
      */

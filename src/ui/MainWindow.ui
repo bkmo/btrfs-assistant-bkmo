@@ -1583,12 +1583,45 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_bmApply">
+                <widget class="QToolButton" name="toolButton_bmApply">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Update Btrfs Maintenance config file and call service to load new settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Apply</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../icons/icons.qrc">
+                   <normaloff>:/icons/checkmark.png</normaloff>:/icons/checkmark.png</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextUnderIcon</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="toolButton_bmRefresh">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Refresh</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../../icons/icons.qrc">
+                   <normaloff>:/icons/reload.png</normaloff>:/icons/reload.png</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextUnderIcon</enum>
                  </property>
                 </widget>
                </item>
