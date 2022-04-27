@@ -176,6 +176,8 @@ void MainWindow::loadSnapperUI()
 
     // Load the configs in the snapper new subtab and the snapper settings tabs
     const QStringList configs = m_snapper->configs();
+    m_ui->comboBox_snapperConfigs->clear();
+    m_ui->comboBox_snapperConfigSettings->clear();
     for (const QString &config : configs) {
         if (m_ui->comboBox_snapperConfigs->findText(config) == -1) {
             m_ui->comboBox_snapperConfigs->addItem(config);
