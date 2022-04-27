@@ -546,7 +546,7 @@ void MainWindow::setup()
 
     // If snapper isn't installed, hide the snapper-related elements of the UI
     if (m_hasSnapper) {
-        m_ui->groupBox_snapperConfigEdit->hide();
+        m_ui->groupBox_snapperConfigCreate->hide();
     } else {
         m_ui->tabWidget_mainWindow->setTabVisible(m_ui->tabWidget_mainWindow->indexOf(m_ui->tab_snapper_general), false);
         m_ui->tabWidget_mainWindow->setTabVisible(m_ui->tabWidget_mainWindow->indexOf(m_ui->tab_snapper_settings), false);
@@ -586,25 +586,16 @@ void MainWindow::setup()
     }
 }
 
-void MainWindow::snapperSettingsEnableEditMode()
+void MainWindow::setSnapperSettingsEditModeEnabled(bool enabled)
 {
+
     m_ui->lineEdit_snapperName->clear();
-    m_ui->groupBox_snapperConfigDisplay->show();
-    m_ui->groupBox_snapperConfigEdit->hide();
-    m_ui->groupBox_snapperConfigSettings->show();
-
-    m_ui->pushButton_snapperNewConfig->setText(tr("New Config"));
+    m_ui->pushButton_snapperNewConfig->setText(tr((enabled) ? "New Config" : "Cancel New Config"));
     m_ui->pushButton_snapperNewConfig->clearFocus();
-}
 
-void MainWindow::snapperSettingsEnableCreateMode()
-{
-    m_ui->groupBox_snapperConfigDisplay->hide();
-    m_ui->groupBox_snapperConfigEdit->show();
-    m_ui->groupBox_snapperConfigSettings->hide();
-
-    m_ui->pushButton_snapperNewConfig->setText(tr("Cancel New Config"));
-    m_ui->pushButton_snapperNewConfig->clearFocus();
+    m_ui->groupBox_snapperConfigCreate->setVisible(!enabled);
+    m_ui->groupBox_snapperConfigDisplay->setVisible(enabled);
+    m_ui->groupBox_snapperConfigSettings->setVisible(enabled);
 }
 
 void MainWindow::snapperTimelineEnable(bool enable)
@@ -1020,8 +1011,8 @@ void MainWindow::on_pushButton_snapperDeleteConfig_clicked()
 
 void MainWindow::on_pushButton_snapperNewConfig_clicked()
 {
-    if (m_ui->groupBox_snapperConfigEdit->isVisible()) {
-        snapperSettingsEnableEditMode();
+    if (m_ui->groupBox_snapperConfigCreate->isVisible()) {
+        setSnapperSettingsEditModeEnabled(true);
     } else {
         // Get a list of btrfs mountpoints that could be backed up
         const QStringList mountpoints = Btrfs::listMountpoints();
@@ -1041,7 +1032,7 @@ void MainWindow::on_pushButton_snapperNewConfig_clicked()
         }
 
         // Put the UI in create config mode
-        snapperSettingsEnableCreateMode();
+        setSnapperSettingsEditModeEnabled(false);
     }
 }
 
@@ -1111,7 +1102,7 @@ void MainWindow::on_pushButton_snapperSaveConfig_clicked()
         populateSnapperConfigSettings();
 
         // Put the ui back in edit mode
-        snapperSettingsEnableEditMode();
+        setSnapperSettingsEditModeEnabled(true);
     }
 
     m_ui->pushButton_snapperSaveConfig->clearFocus();

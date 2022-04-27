@@ -131,14 +131,9 @@ class MainWindow : public QMainWindow {
     void setup();
 
     /**
-     * @brief Switches Snapper Settings UI to edit mode
+     * @brief Toggles Snapper Settings UI between Edit and Create mode
      */
-    void snapperSettingsEnableEditMode();
-
-    /**
-     * @brief Switches Snapper Settings UI to create mode
-     */
-    void snapperSettingsEnableCreateMode();
+    void setSnapperSettingsEditModeEnabled(bool enabled);
 
     /**
      * @brief Enables or disables the timeline spinboxes to match the timeline checkbox
