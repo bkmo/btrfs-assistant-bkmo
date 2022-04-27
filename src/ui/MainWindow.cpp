@@ -586,6 +586,27 @@ void MainWindow::setup()
     }
 }
 
+void MainWindow::snapperSettingsEnableEditMode()
+{
+    m_ui->lineEdit_snapperName->clear();
+    m_ui->groupBox_snapperConfigDisplay->show();
+    m_ui->groupBox_snapperConfigEdit->hide();
+    m_ui->groupBox_snapperConfigSettings->show();
+
+    m_ui->pushButton_snapperNewConfig->setText(tr("New Config"));
+    m_ui->pushButton_snapperNewConfig->clearFocus();
+}
+
+void MainWindow::snapperSettingsEnableCreateMode()
+{
+    m_ui->groupBox_snapperConfigDisplay->hide();
+    m_ui->groupBox_snapperConfigEdit->show();
+    m_ui->groupBox_snapperConfigSettings->hide();
+
+    m_ui->pushButton_snapperNewConfig->setText(tr("Cancel New Config"));
+    m_ui->pushButton_snapperNewConfig->clearFocus();
+}
+
 void MainWindow::snapperTimelineEnable(bool enable)
 {
     m_ui->spinBox_snapperHourly->setEnabled(enable);
@@ -1000,15 +1021,7 @@ void MainWindow::on_pushButton_snapperDeleteConfig_clicked()
 void MainWindow::on_pushButton_snapperNewConfig_clicked()
 {
     if (m_ui->groupBox_snapperConfigEdit->isVisible()) {
-        m_ui->lineEdit_snapperName->clear();
-
-        // Put the ui back in edit mode
-        m_ui->groupBox_snapperConfigDisplay->show();
-        m_ui->groupBox_snapperConfigEdit->hide();
-        m_ui->groupBox_snapperConfigSettings->show();
-
-        m_ui->pushButton_snapperNewConfig->setText(tr("New Config"));
-        m_ui->pushButton_snapperNewConfig->clearFocus();
+        snapperSettingsEnableEditMode();
     } else {
         // Get a list of btrfs mountpoints that could be backed up
         const QStringList mountpoints = Btrfs::listMountpoints();
@@ -1028,12 +1041,7 @@ void MainWindow::on_pushButton_snapperNewConfig_clicked()
         }
 
         // Put the UI in create config mode
-        m_ui->groupBox_snapperConfigDisplay->hide();
-        m_ui->groupBox_snapperConfigEdit->show();
-        m_ui->groupBox_snapperConfigSettings->hide();
-
-        m_ui->pushButton_snapperNewConfig->setText(tr("Cancel New Config"));
-        m_ui->pushButton_snapperNewConfig->clearFocus();
+        snapperSettingsEnableCreateMode();
     }
 }
 
@@ -1103,10 +1111,7 @@ void MainWindow::on_pushButton_snapperSaveConfig_clicked()
         populateSnapperConfigSettings();
 
         // Put the ui back in edit mode
-        m_ui->groupBox_snapperConfigDisplay->show();
-        m_ui->groupBox_snapperConfigEdit->hide();
-        m_ui->groupBox_snapperConfigSettings->show();
-        m_ui->pushButton_snapperNewConfig->setText(tr("New Config"));
+        snapperSettingsEnableEditMode();
     }
 
     m_ui->pushButton_snapperSaveConfig->clearFocus();

@@ -131,6 +131,16 @@ class MainWindow : public QMainWindow {
     void setup();
 
     /**
+     * @brief Switches Snapper Settings UI to edit mode
+     */
+    void snapperSettingsEnableEditMode();
+
+    /**
+     * @brief Switches Snapper Settings UI to create mode
+     */
+    void snapperSettingsEnableCreateMode();
+
+    /**
      * @brief Enables or disables the timeline spinboxes to match the timeline checkbox
      * @param enable
      */
@@ -207,6 +217,10 @@ class MainWindow : public QMainWindow {
      * @brief Btrfs scrub button handler
      */
     void on_pushButton_btrfsScrub_clicked();
+
+    /**
+     * @brief Btrfs enable quota button hanlder
+     */
     void on_pushButton_enableQuota_clicked();
 
     /**
@@ -218,6 +232,11 @@ class MainWindow : public QMainWindow {
      * @brief When a new config is selected repopulate the UI
      */
     void on_comboBox_snapperConfigSettings_activated(int index);
+
+    /**
+     * @brief When a subvolume is selected in the Browse/Restore tab, display the snapshots for that target.
+     * @param index of the selected subvolume from the subvolume target combobox.
+     */
     void on_comboBox_snapperSubvols_activated(int index);
     /**
      * @brief Apply btrfs maintenance system settings based on the UI state.
