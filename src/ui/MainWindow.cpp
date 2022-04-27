@@ -174,18 +174,22 @@ void MainWindow::loadSnapperUI()
     if (!m_hasSnapper)
         return;
 
-    // Load the configs in the snapper new subtab and the snapper settings tabs
-    const QStringList configs = m_snapper->configs();
+    // Store current selection to restore after reload
+    QString selectedSnapperConfig = m_ui->comboBox_snapperConfigs->currentText();
+    QString selectedSnapperSettingsConfig = m_ui->comboBox_snapperConfigSettings->currentText();
+
     m_ui->comboBox_snapperConfigs->clear();
     m_ui->comboBox_snapperConfigSettings->clear();
+
+    // Load the configs in the snapper new subtab and the snapper settings tabs
+    const QStringList configs = m_snapper->configs();
     for (const QString &config : configs) {
-        if (m_ui->comboBox_snapperConfigs->findText(config) == -1) {
-            m_ui->comboBox_snapperConfigs->addItem(config);
-        }
-        if (m_ui->comboBox_snapperConfigSettings->findText(config) == -1) {
-            m_ui->comboBox_snapperConfigSettings->addItem(config);
-        }
+        m_ui->comboBox_snapperConfigs->addItem(config);
+        m_ui->comboBox_snapperConfigSettings->addItem(config);
     }
+
+    m_ui->comboBox_snapperConfigs->setCurrentText(selectedSnapperConfig);
+    m_ui->comboBox_snapperConfigSettings->setCurrentText(selectedSnapperSettingsConfig);
 
     // Load the subvols in the snapper restore subtab
     const QStringList subvols = m_snapper->subvolKeys();
