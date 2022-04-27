@@ -590,7 +590,7 @@ void MainWindow::setSnapperSettingsEditModeEnabled(bool enabled)
 {
 
     m_ui->lineEdit_snapperName->clear();
-    m_ui->pushButton_snapperNewConfig->setText(tr((enabled) ? "New Config" : "Cancel New Config"));
+    m_ui->pushButton_snapperNewConfig->setText(tr(enabled ? "New Config" : "Cancel New Config"));
     m_ui->pushButton_snapperNewConfig->clearFocus();
 
     m_ui->groupBox_snapperConfigCreate->setVisible(!enabled);
