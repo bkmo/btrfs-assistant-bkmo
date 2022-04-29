@@ -558,7 +558,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../../icons/icons.qrc">
-                   <normaloff>:/icons/minus.png</normaloff>:/icons/minus.png</iconset>
+                   <normaloff>:/icons/minus.svg</normaloff>:/icons/minus.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -701,7 +701,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../../icons/icons.qrc">
-                   <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
+                   <normaloff>:/icons/plus.svg</normaloff>:/icons/plus.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -721,7 +721,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../../icons/icons.qrc">
-                   <normaloff>:/icons/minus.png</normaloff>:/icons/minus.png</iconset>
+                   <normaloff>:/icons/minus.svg</normaloff>:/icons/minus.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -1699,7 +1699,7 @@
                  </property>
                  <property name="icon">
                   <iconset resource="../../icons/icons.qrc">
-                   <normaloff>:/icons/checkmark.png</normaloff>:/icons/checkmark.png</iconset>
+                   <normaloff>:/icons/checkmark.svg</normaloff>:/icons/checkmark.svg</iconset>
                  </property>
                  <property name="toolButtonStyle">
                   <enum>Qt::ToolButtonTextUnderIcon</enum>
