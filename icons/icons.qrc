@@ -1,15 +1,17 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>restore.png</file>
-        <file>reload.png</file>
         <file>btrfs-assistant.png</file>
         <file>edit-clear.svg</file>
-        <file>folder.png</file>
-        <file>reset.png</file>
-        <file>save.png</file>
         <file>checkmark.svg</file>
         <file>cancel.svg</file>
         <file>plus.svg</file>
         <file>minus.svg</file>
+        <file>CMakeLists.txt</file>
+        <file>icons.qrc</file>
+        <file>folder.svg</file>
+        <file>reload.svg</file>
+        <file>reset.svg</file>
+        <file>restore.svg</file>
+        <file>save.svg</file>
     </qresource>
 </RCC>
