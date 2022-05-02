@@ -6,8 +6,6 @@
         <file>cancel.svg</file>
         <file>plus.svg</file>
         <file>minus.svg</file>
-        <file>CMakeLists.txt</file>
-        <file>icons.qrc</file>
         <file>folder.svg</file>
         <file>reload.svg</file>
         <file>reset.svg</file>
