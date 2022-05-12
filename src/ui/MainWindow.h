@@ -274,5 +274,10 @@ class MainWindow : public QMainWindow {
 
     void on_toolButton_snapperNewRefresh_clicked();
     void on_toolButton_snapperRestoreRefresh_clicked();
+
+    /**
+     * @brief Remount subvolume after restoring snapshot
+     */
+    bool remountSubvolume(const QString &targetSubvol);
 };
 #endif // MAINWINDOW_H
