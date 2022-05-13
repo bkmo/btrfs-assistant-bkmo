@@ -561,12 +561,21 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
 
 bool MainWindow::remountSubvolume(const QString &targetSubvol)
 {
+    // Check if the some commands are available in your Linux system.
+    // That is important, otherwise more risk if the commands are missing.
+    Result checkCommands = System::runCmd("command -v 'grep' && command -v 'findmnt' && command -v 'cut'"
+                                          " && command -v 'mount' && command -v 'umount'", true);
+    if (checkCommands.exitCode != 0) {
+        QMessageBox::warning(this, tr("Reboot"), "Please reboot immediately!");
+        return false;
+    }
+
     // Verify the existing mount-paths from the backup-subvolume before starting remounting.
     bool isValid = true;
 
     // Get the used mount-path of this backup-subvolume that is detected by the command findmnt.
     Result subvolumePath = System::runCmd("findmnt -nt btrfs | grep -m 1 " + targetSubvol + "_backup_ | cut -d '/' -f 2- | cut -d ' ' -f 1", true);
-    // TODO: There is the alternative of findmnt: How to get the mount-path from the defined Snapper config instead of findmnt?
+    // (TODO: There is the alternative of findmnt: How to get the mount-path from the defined Snapper config instead of findmnt?)
 
     // 1. verification: Is path null?
     if (subvolumePath.output.isNull()) {
@@ -574,6 +583,7 @@ bool MainWindow::remountSubvolume(const QString &targetSubvol)
     }
 
     // 2. verification: Only root- and home-subvolume paths should not be remounted.
+    // And the mount-path should only be on btrfs that was detected by "findmnt -nt btrfs", not on overlay.
     if (isValid && (subvolumePath.output.isEmpty() || subvolumePath.output == "home")) {
         isValid = false;
     }
@@ -626,8 +636,8 @@ bool MainWindow::remountSubvolume(const QString &targetSubvol)
     // All verifications are valid, then asking people to decide remount this subvolume or not.
     if (QMessageBox::question(this, tr("Refresh Subvolume"),
                               tr("Do you want to remount this subvolume like refresh without reboot?")
-                              + "\n\n" + tr("If yes, please stop all processes running on this subvolume.")
-                              + "\n\n" + tr("If no, please reboot immediately.")) ==
+                              + "\n\n" + tr("If yes, please stop all processes using this subvolume!")
+                              + "\n\n" + tr("If no, please reboot immediately!")) ==
         QMessageBox::No) {
         QMessageBox::warning(this, tr("Reboot"), "Please reboot immediately!");
         return false;
@@ -656,18 +666,22 @@ bool MainWindow::remountSubvolume(const QString &targetSubvol)
         return false;
 
     } else {
-        // Back to mount the old defined paths in this old subvolume(backup) after failure of this recursive unmounting
-        for (int i = mountPathLines.size() - 1; i > 0; i--) {
-            Result remount = System::runCmd("mount " + mountPathLines[i], true);
-            if (remount.exitCode != 0) {
-                isMountSuccessful = false;
+        // Mount back the old paths in this old (backup)subvolume after failure of this recursive unmounting.
+        for (int i = 1; i < mountPathLines.size(); i++) {
+            Result mountBack = System::runCmd("mount " + mountPathLines[i], true);
+            if (mountBack.exitCode != 0) {
+                if (mountBack.output.contains("already mounted")) {
+                    // That is ok
+                } else {
+                    isMountSuccessful = false;
+                }
             }
         }
 
         if (isMountSuccessful) {
             displayError(runUnmount.output + "\n\nPlease stop all processes using this subvolume or reboot immediately");
 
-            // true means, it will repeat asking people to remount after failure (subvolume in use), they would manually stop some processes later or not.
+            // true means, it will repeat asking people to remount after failure (because subvolume is in use), they would manually stop all processes later or not.
             return true;
 
         } else {
