@@ -544,11 +544,156 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
     if (restoreResult.isSuccess) {
         QMessageBox::information(this, tr("Snapshot Restore"),
                                  tr("Snapshot restoration complete.") + "\n\n" + tr("A copy of the original subvolume has been saved as ") +
-                                     restoreResult.backupSubvolName + "\n\n" + tr("Please reboot immediately"));
+                                     restoreResult.backupSubvolName);
+        int attemptErrorCounter = 0;
+        while(remountSubvolume(targetSubvol)) {
+            if (attemptErrorCounter > 2) {
+                displayError("Reboot strongly recommended!");
+                break;
+            }
+            attemptErrorCounter++;
+        };
+
     } else {
         displayError(restoreResult.failureMessage);
     }
 }
+
+bool MainWindow::remountSubvolume(const QString &targetSubvol)
+{
+    // Check if the some commands are available in your Linux system.
+    // That is important, otherwise more risk if the commands are missing.
+    Result checkCommands = System::runCmd("command -v 'grep' && command -v 'findmnt' && command -v 'cut'"
+                                          " && command -v 'mount' && command -v 'umount'", true);
+    if (checkCommands.exitCode != 0) {
+        QMessageBox::warning(this, tr("Reboot"), "Please reboot immediately!");
+        return false;
+    }
+
+    // Verify the existing mount-paths from the backup-subvolume before starting remounting.
+    bool isValid = true;
+
+    // Get the used mount-path of this backup-subvolume that is detected by the command findmnt.
+    Result subvolumePath = System::runCmd("findmnt -nt btrfs | grep -m 1 " + targetSubvol + "_backup_ | cut -d '/' -f 2- | cut -d ' ' -f 1", true);
+    // (TODO: There is the alternative of findmnt: How to get the mount-path from the defined Snapper config instead of findmnt?)
+
+    // 1. verification: Is path null?
+    if (subvolumePath.output.isNull()) {
+        isValid = false;
+    }
+
+    // 2. verification: Only root- and home-subvolume paths should not be remounted.
+    // And the mount-path should only be on btrfs that was detected by "findmnt -nt btrfs", not on overlay.
+    if (isValid && (subvolumePath.output.isEmpty() || subvolumePath.output == "home")) {
+        isValid = false;
+    }
+
+     Result collectMountPaths;
+     QStringList mountPathLines;
+     if (isValid) {
+         // Collect all defined or/and custom mountpoints in this subvolume.
+         collectMountPaths = System::runCmd("grep /" + subvolumePath.output + " /proc/mounts | cut -f 2 -d ' ' | sort", true);
+         // Convert text to lines.
+         mountPathLines = collectMountPaths.output.split("\n");
+     }
+
+    // 3. verification: The limit of mountpoints count is maximum 3.
+    if (isValid && (mountPathLines.size() > 3 || mountPathLines.size() <= 0)) {
+        isValid = false;
+    }
+
+    // 4. verification: The custom mointpoints must match the defined mountpoints from /etc/fstab.
+    if (isValid) {
+        Result definedMountPathsFromFstab = System::runCmd("mount -fav | grep ' mounted' | cut -d ' ' -f 1 | cut -d ':' -f 1", true);
+        QStringList definedPathLines = definedMountPathsFromFstab.output.split("\n");
+
+        if (mountPathLines.size() < definedPathLines.size()){
+            bool foundDefinedPath = false;
+            int i = 0;
+            while (i < mountPathLines.size()) {
+                foundDefinedPath = definedPathLines.contains(mountPathLines[i]);
+                i++;
+                if (!foundDefinedPath) {
+                    // They do not match the defined mountpoints from /etc/fstab
+                    isValid = false;
+                    break;
+                }
+            }
+        } else {
+            // They do not match the defined mountpoints from /etc/fstab
+            isValid = false;
+        }
+
+    }
+
+    // One or more verifications are invalid, then display "Please reboot immediately".
+    if (!isValid){
+        QMessageBox::warning(this, tr("Reboot"), "Please reboot immediately!");
+        return false;
+    }
+
+    // End of all verifications.
+    // All verifications are valid, then asking people to decide remount this subvolume or not.
+    if (QMessageBox::question(this, tr("Refresh Subvolume"),
+                              tr("Do you want to remount this subvolume like refresh without reboot?")
+                              + "\n\n" + tr("If yes, please stop all processes using this subvolume!")
+                              + "\n\n" + tr("If no, please reboot immediately!")) ==
+        QMessageBox::No) {
+        QMessageBox::warning(this, tr("Reboot"), "Please reboot immediately!");
+        return false;
+    }
+
+
+    // Time to do recursive unmounting this subvolume that has one or multiple mountpoints.
+    Result runUnmount = System::runCmd("umount -R /" + subvolumePath.output, true);
+
+    bool isMountSuccessful = true;
+    if (runUnmount.exitCode == 0) {
+        for (int i = 0; i < mountPathLines.size(); i++) {
+            // Remount defined paths in the new subvolume like before.
+            Result remount = System::runCmd("mount " + mountPathLines[i], true);
+            if (remount.exitCode != 0) {
+                displayError(remount.output + "\n\nReboot strongly recommended!");
+                isMountSuccessful = false;
+                break;
+            }
+        }
+
+        if (isMountSuccessful) {
+            QMessageBox::information(this, tr("Successful Remounting"), "Successful refresh this subvolume!");
+        }
+
+        return false;
+
+    } else {
+        // Mount back the old paths in this old (backup)subvolume after failure of this recursive unmounting.
+        for (int i = 1; i < mountPathLines.size(); i++) {
+            Result mountBack = System::runCmd("mount " + mountPathLines[i], true);
+            if (mountBack.exitCode != 0) {
+                if (mountBack.output.contains("already mounted")) {
+                    // That is ok
+                } else {
+                    isMountSuccessful = false;
+                }
+            }
+        }
+
+        if (isMountSuccessful) {
+            displayError(runUnmount.output + "\n\nPlease stop all processes using this subvolume or reboot immediately");
+
+            // true means, it will repeat asking people to remount after failure (because subvolume is in use), they would manually stop all processes later or not.
+            return true;
+
+        } else {
+            displayError(runUnmount.output + "\n\nReboot strongly recommended!");
+
+            return false;
+
+        }
+    }
+    return false;
+}
+
 
 void MainWindow::setup()
 {
