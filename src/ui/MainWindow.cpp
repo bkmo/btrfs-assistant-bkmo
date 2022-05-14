@@ -1260,14 +1260,12 @@ void MainWindow::on_tableView_subvols_customContextMenuRequested(const QPoint &p
     }
 
     QVector<Subvolume> selectedSubvolumes;
-    {
-        const QModelIndexList selectedIndexes = m_ui->tableView_subvols->selectionModel()->selectedRows(SubvolumeModel::Column::Name);
+    const QModelIndexList selectedIndexes = m_ui->tableView_subvols->selectionModel()->selectedRows(SubvolumeModel::Column::Name);
 
-        for (const QModelIndex &idx : selectedIndexes) {
-            QModelIndex sourceIdx = m_subvolumeFilterModel->mapToSource(idx);
-            const Subvolume &s = m_subvolumeModel->subvolume(sourceIdx.row());
-            selectedSubvolumes.append(s);
-        }
+    for (const QModelIndex &idx : selectedIndexes) {
+        QModelIndex sourceIdx = m_subvolumeFilterModel->mapToSource(idx);
+        const Subvolume &s = m_subvolumeModel->subvolume(sourceIdx.row());
+        selectedSubvolumes.append(s);
     }
 
     QVector<Subvolume> readOnlySubvols;

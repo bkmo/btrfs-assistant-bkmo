@@ -98,16 +98,16 @@ std::optional<Subvolume> Btrfs::createSnapshot(const QString &uuid, uint64_t sub
 {
     std::optional<Subvolume> ret;
     if (m_filesystems.contains(uuid) && m_filesystems.value(uuid).subvolumes.contains(subvolId)) {
-        const Subvolume subvol = m_filesystems.value(uuid).subvolumes.value(subvolId);
+        const QString subvolName = subvolumeName(uuid, subvolId);
         const QString mountpoint = mountRoot(uuid);
-        const QString subvolPath = QDir::cleanPath(mountpoint + QDir::separator() + subvol.subvolName);
+        const QString subvolPath = QDir::cleanPath(mountpoint + QDir::separator() + subvolName);
 
         if (createSnapshot(subvolPath, dest, readOnly)) {
             struct btrfs_util_subvolume_info subvolInfo;
             btrfs_util_error returnCode = btrfs_util_subvolume_info(dest.toLocal8Bit(), 0, &subvolInfo);
             if (returnCode == BTRFS_UTIL_OK) {
                 ret = infoToSubvolume(uuid, subvolumeName(dest), subvolInfo);
-                m_filesystems[uuid].subvolumes[subvol.id] = *ret;
+                m_filesystems[uuid].subvolumes[ret->id] = *ret;
             }
         }
     }
