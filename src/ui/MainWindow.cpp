@@ -2,6 +2,7 @@
 #include "model/SubvolModel.h"
 #include "ui/FileBrowser.h"
 #include "ui_MainWindow.h"
+#include "ui/SnapshotSubvolumeDialog.h"
 #include "util/Btrfs.h"
 #include "util/BtrfsMaintenance.h"
 #include "util/Settings.h"
@@ -532,13 +533,17 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
     }
 
     // We are out of errors to check for, time to ask for confirmation
-    if (QMessageBox::question(this, tr("Confirm"),
-                              tr("Are you sure you want to restore ") + subvolume + tr(" to ", "as in from/to") + targetSubvol) !=
-        QMessageBox::Yes) {
+    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog(
+                tr("Are you sure you want to restore ")  + subvolume +  tr(" to ", "as in from/to") + targetSubvol + " ?");
+    confirmDialog.showDialog();
+
+    QString backupName = QString();
+
+    if (confirmDialog.isComfirmed()) {
+        backupName = confirmDialog.getBackupInputText();
+    } else {
         return;
     }
-
-     QString backupName = QInputDialog::getText(this, "Backup name", "Optional backup name");
 
     // Everything checks out, time to do the restore
     RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, subvolId, targetId, backupName);
@@ -1235,11 +1240,18 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     }
 
     // Ask for confirmation
-    if (QMessageBox::question(this, tr("Confirm"), tr("Are you sure you want to restore the selected backup?")) != QMessageBox::Yes) {
+    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog(
+                tr("Are you sure you want to restore the selected backup?"));
+    confirmDialog.showDialog();
+
+    QString backupName = QString();
+
+    // We are out of errors to check for, time to ask for confirmation
+    if (confirmDialog.isComfirmed()) {
+        backupName = confirmDialog.getBackupInputText();
+    } else {
         return;
     }
-
-    QString backupName = QInputDialog::getText(this, "Backup name", "Optional backup name");
 
     // Everything checks out, time to do the restore
     RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, sourceId, targetId, backupName);
