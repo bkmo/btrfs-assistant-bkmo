@@ -1217,7 +1217,7 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     const QString name = nameIndexes.at(0).data().toString();
 
     // Ensure it is a backup we created
-    static QRegularExpression re("_backup_[0-9]*$");
+    static QRegularExpression re("_backup_[0-9]{17}");
     const QStringList nameParts = name.split(re);
 
     if (nameParts.count() != 2) {
