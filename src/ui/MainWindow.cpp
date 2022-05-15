@@ -533,17 +533,14 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
     }
 
     // We are out of errors to check for, time to ask for confirmation
-    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog("Confirm",
-                tr("Are you sure you want to restore ")  + subvolume +  tr(" to ", "as in from/to") + targetSubvol + " ?");
-    confirmDialog.showDialog();
-
-    QString backupName = QString();
-
-    if (confirmDialog.isComfirmed()) {
-        backupName = confirmDialog.getBackupInputText();
-    } else {
+    SnapshotSubvolumeDialog confirmDialog("Confirm", tr("Are you sure you want to restore ")
+                                          + subvolume +  tr(" to ", "as in from/to") + targetSubvol + " ?");
+     // We are out of errors to check for, time to ask for confirmation
+    if (confirmDialog.exec() != QDialog::Accepted) {
         return;
     }
+
+    const QString backupName = confirmDialog.backupName();
 
     // Everything checks out, time to do the restore
     RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, subvolId, targetId, backupName);
@@ -1240,18 +1237,15 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     }
 
     // Ask for confirmation
-    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog("Confirm",
+    SnapshotSubvolumeDialog confirmDialog("Confirm",
                 tr("Are you sure you want to restore the selected backup?"));
-    confirmDialog.showDialog();
 
-    QString backupName = QString();
-
-    // We are out of errors to check for, time to ask for confirmation
-    if (confirmDialog.isComfirmed()) {
-        backupName = confirmDialog.getBackupInputText();
-    } else {
+     // We are out of errors to check for, time to ask for confirmation
+    if (confirmDialog.exec() != QDialog::Accepted) {
         return;
     }
+
+    const QString backupName = confirmDialog.backupName();
 
     // Everything checks out, time to do the restore
     RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, sourceId, targetId, backupName);

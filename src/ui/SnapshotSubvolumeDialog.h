@@ -14,18 +14,16 @@ class SnapshotSubvolumeDialog : public QDialog
 public:
     SnapshotSubvolumeDialog(const QString &title, const QString &label, QWidget *parent = nullptr);
     ~SnapshotSubvolumeDialog();
+    QString backupName();
 
 private:
-    Ui::SnapshotSubvolumeDialog *s_ui = nullptr;
-    QString s_backupName = QString();
-    bool s_isClicked = false, s_isConfirmed = false;
+    Ui::SnapshotSubvolumeDialog *m_ui = nullptr;
+    QString m_backupName = QString();
 
-public slots:
-    bool isComfirmed();
-    QString getBackupInputText();
-    void showDialog();
+private slots:
     void on_pushButton_yes_clicked();
     void on_pushButton_no_clicked();
+
 };
 
 #endif // SNAPSHOTSUBVOLUMEDIALOG_H
