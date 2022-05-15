@@ -533,7 +533,7 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
     }
 
     // We are out of errors to check for, time to ask for confirmation
-    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog(
+    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog("Confirm",
                 tr("Are you sure you want to restore ")  + subvolume +  tr(" to ", "as in from/to") + targetSubvol + " ?");
     confirmDialog.showDialog();
 
@@ -1240,7 +1240,7 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     }
 
     // Ask for confirmation
-    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog(
+    SnapshotSubvolumeDialog confirmDialog = SnapshotSubvolumeDialog("Confirm",
                 tr("Are you sure you want to restore the selected backup?"));
     confirmDialog.showDialog();
 

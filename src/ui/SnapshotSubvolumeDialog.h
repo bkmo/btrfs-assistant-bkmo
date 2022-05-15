@@ -12,7 +12,7 @@ class SnapshotSubvolumeDialog : public QDialog
     Q_OBJECT
 
 public:
-    SnapshotSubvolumeDialog(const QString &label, QWidget *parent = nullptr);
+    SnapshotSubvolumeDialog(const QString &title, const QString &label, QWidget *parent = nullptr);
     ~SnapshotSubvolumeDialog();
 
 private:

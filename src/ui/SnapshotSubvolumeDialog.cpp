@@ -1,12 +1,12 @@
 #include "SnapshotSubvolumeDialog.h"
 #include "ui_SnapshotSubvolumeDialog.h"
 
-SnapshotSubvolumeDialog::SnapshotSubvolumeDialog(const QString &label, QWidget *parent) :
+SnapshotSubvolumeDialog::SnapshotSubvolumeDialog(const QString &title, const QString &label, QWidget *parent) :
     QDialog(parent), s_ui(new Ui::SnapshotSubvolumeDialog)
 {
     s_ui->setupUi(this);
     s_ui->questionLabel->setText(label);
-    this->setWindowTitle("Confirm");
+    this->setWindowTitle(title);
 }
 
 SnapshotSubvolumeDialog::~SnapshotSubvolumeDialog()
