@@ -18,7 +18,7 @@ public:
 
 private:
     Ui::SnapshotSubvolumeDialog *m_ui = nullptr;
-    QString m_backupName = QString();
+    QString m_backupName;
 
 private slots:
     void on_pushButton_yes_clicked();
