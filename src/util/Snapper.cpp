@@ -333,7 +333,7 @@ bool Snapper::restoreFile(const QString &sourcePath, const QString &destPath) co
     return true;
 }
 
-RestoreResult Snapper::restoreSubvol(const QString &uuid, const uint64_t sourceId, const uint64_t targetId) const
+RestoreResult Snapper::restoreSubvol(const QString &uuid, const uint64_t sourceId, const uint64_t targetId, const QString &customName) const
 {
     RestoreResult restoreResult;
 
@@ -347,7 +347,7 @@ RestoreResult Snapper::restoreSubvol(const QString &uuid, const uint64_t sourceI
     QString snapshotSubvol = findSnapshotSubvolume(sourceName);
 
     // We are out of excuses, time to do the restore....carefully
-    QString targetBackup = targetName + "_backup_" + QDateTime::currentDateTime().toString("yyyyddMMHHmmsszzz");
+    QString targetBackup = targetName + "_backup_" + QDateTime::currentDateTime().toString("yyyyddMMHHmmsszzz") + "_" + customName;
     restoreResult.backupSubvolName = targetBackup;
 
     // Find the children before we start

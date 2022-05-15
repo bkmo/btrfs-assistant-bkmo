@@ -533,12 +533,20 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
 
     // We are out of errors to check for, time to ask for confirmation
     if (QMessageBox::question(this, tr("Confirm"),
-                              tr("Are you sure you want to restore ") + subvolume + tr(" to ", "as in from/to") + targetSubvol) !=
-        QMessageBox::Yes)
+                              tr("Are you sure you want to restore ") + subvolume + tr(" to ", "as in from/to") + targetSubvol) ==
+        QMessageBox::No) {
         return;
+    }
+
+     bool ok;
+     QString backupName = QInputDialog::getText(this, tr("Enter a name for the backup"), tr("Give a backup name:"),
+                                                         QLineEdit::Normal, "", &ok);
+     if (!ok) {
+         return;
+     }
 
     // Everything checks out, time to do the restore
-    RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, subvolId, targetId);
+    RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, subvolId, targetId, backupName);
 
     // Report the outcome to the end user
     if (restoreResult.isSuccess) {
@@ -1232,12 +1240,19 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     }
 
     // Ask for confirmation
-    if (QMessageBox::question(this, tr("Confirm"), tr("Are you sure you want to restore the selected backup?")) != QMessageBox::Yes) {
+    if (QMessageBox::question(this, tr("Confirm"), tr("Are you sure you want to restore the selected backup?")) == QMessageBox::No) {
+        return;
+    }
+
+    bool ok;
+    QString backupName = QInputDialog::getText(this, tr("Enter a name for the backup"), tr("Give a backup name:"),
+                                                        QLineEdit::Normal, "", &ok);
+    if (!ok) {
         return;
     }
 
     // Everything checks out, time to do the restore
-    RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, sourceId, targetId);
+    RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, sourceId, targetId, backupName);
 
     // Report the outcome to the end user
     if (restoreResult.isSuccess) {
