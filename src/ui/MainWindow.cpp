@@ -539,7 +539,7 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
     }
 
      bool ok;
-     QString backupName = QInputDialog::getText(this, tr("Enter a name for the backup"), tr("Give a backup name:"),
+     QString backupName = QInputDialog::getText(this, tr("Optional backup name"), tr("Give a backup name:"),
                                                          QLineEdit::Normal, "", &ok);
      if (!ok) {
          return;
@@ -1245,7 +1245,7 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     }
 
     bool ok;
-    QString backupName = QInputDialog::getText(this, tr("Enter a name for the backup"), tr("Give a backup name:"),
+    QString backupName = QInputDialog::getText(this, tr("Optional backup name"), tr("Give a backup name:"),
                                                         QLineEdit::Normal, "", &ok);
     if (!ok) {
         return;
