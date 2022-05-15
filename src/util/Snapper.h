@@ -188,7 +188,7 @@ class Snapper : public QObject {
      * @param customName - Give any name for backup
      * @return A RestoreResult struct that contains the results of the operation
      */
-    RestoreResult restoreSubvol(const QString &uuid, const uint64_t sourceId, const uint64_t targetId, const QString &customName = "") const;
+    RestoreResult restoreSubvol(const QString &uuid, const uint64_t sourceId, const uint64_t targetId, const QString &customName = QString()) const;
 
     /**
      * @brief Updates the settings for a given Snapper config described by @p name

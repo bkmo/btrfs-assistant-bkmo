@@ -533,14 +533,18 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
 
     // We are out of errors to check for, time to ask for confirmation
     if (QMessageBox::question(this, tr("Confirm"),
-                              tr("Are you sure you want to restore ") + subvolume + tr(" to ", "as in from/to") + targetSubvol) ==
-        QMessageBox::No) {
+                              tr("Are you sure you want to restore ") + subvolume + tr(" to ", "as in from/to") + targetSubvol) !=
+        QMessageBox::Yes) {
         return;
     }
 
+     QString backupName = QString();
+    if (QMessageBox::question(this, tr("Backup name"),
+                              tr("Do you want to give the backup \"") + targetSubvol + "\" a new name?") ==
+        QMessageBox::Yes) {
+         backupName = QInputDialog::getText(this, "Backup name", "Optional backup name");
 
-    QString backupName = QInputDialog::getText(this, "Backup name", "Optional backup name",
-                                                         QLineEdit::Normal);
+    }
 
     // Everything checks out, time to do the restore
     RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, subvolId, targetId, backupName);
@@ -1237,7 +1241,7 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     }
 
     // Ask for confirmation
-    if (QMessageBox::question(this, tr("Confirm"), tr("Are you sure you want to restore the selected backup?")) == QMessageBox::No) {
+    if (QMessageBox::question(this, tr("Confirm"), tr("Are you sure you want to restore the selected backup?")) != QMessageBox::Yes) {
         return;
     }
 

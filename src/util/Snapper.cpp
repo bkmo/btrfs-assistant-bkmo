@@ -351,7 +351,7 @@ RestoreResult Snapper::restoreSubvol(const QString &uuid, const uint64_t sourceI
     QString targetBackup = targetName + "_backup_" + QDateTime::currentDateTime().toString("yyyyddMMHHmmsszzz");
 
     if (!customName.trimmed().isEmpty()) {
-        targetBackup += "_" + customName;
+        targetBackup += "_" + customName.trimmed();
     }
 
     restoreResult.backupSubvolName = targetBackup;
