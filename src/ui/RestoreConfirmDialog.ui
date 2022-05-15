@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SnapshotSubvolumeDialog</class>
- <widget class="QDialog" name="SnapshotSubvolumeDialog">
+ <class>RestoreConfirmDialog</class>
+ <widget class="QDialog" name="RestoreConfirmDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="questionLabel">
      <property name="text">
-      <string>Are you sure you want to restore @/.snapshots/510/snapshot to @</string>
+      <string></string>
      </property>
     </widget>
    </item>

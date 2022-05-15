@@ -2,7 +2,7 @@
 #include "model/SubvolModel.h"
 #include "ui/FileBrowser.h"
 #include "ui_MainWindow.h"
-#include "ui/SnapshotSubvolumeDialog.h"
+#include "ui/RestoreConfirmDialog.h"
 #include "util/Btrfs.h"
 #include "util/BtrfsMaintenance.h"
 #include "util/Settings.h"
@@ -533,7 +533,7 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
     }
 
     // We are out of errors to check for, time to ask for confirmation
-    SnapshotSubvolumeDialog confirmDialog("Confirm", tr("Are you sure you want to restore ")
+    RestoreConfirmDialog confirmDialog("Confirm", tr("Are you sure you want to restore ")
                                           + subvolume +  tr(" to ", "as in from/to") + targetSubvol + " ?");
      // We are out of errors to check for, time to ask for confirmation
     if (confirmDialog.exec() != QDialog::Accepted) {
@@ -1237,7 +1237,7 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
     }
 
     // Ask for confirmation
-    SnapshotSubvolumeDialog confirmDialog("Confirm",
+    RestoreConfirmDialog confirmDialog("Confirm",
                 tr("Are you sure you want to restore the selected backup?"));
 
      // We are out of errors to check for, time to ask for confirmation
