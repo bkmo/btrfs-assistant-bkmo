@@ -539,7 +539,7 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
     }
 
 
-    QString backupName = QInputDialog::getText(this, tr("Backup name"), tr("Optional backup name:"),
+    QString backupName = QInputDialog::getText(this, "Backup name", "Optional backup name",
                                                          QLineEdit::Normal);
 
     // Everything checks out, time to do the restore
@@ -1241,7 +1241,7 @@ void MainWindow::on_toolButton_subvolRestoreBackup_clicked()
         return;
     }
 
-    QString backupName = QInputDialog::getText(this, tr("Backup name"), tr("Optional backup name:"));
+    QString backupName = QInputDialog::getText(this, "Backup name", "Optional backup name");
 
     // Everything checks out, time to do the restore
     RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, sourceId, targetId, backupName);
