@@ -538,13 +538,7 @@ void MainWindow::restoreSnapshot(const QString &uuid, const QString &subvolume)
         return;
     }
 
-     QString backupName = QString();
-    if (QMessageBox::question(this, tr("Backup name"),
-                              tr("Do you want to give the backup \"") + targetSubvol + "\" a new name?") ==
-        QMessageBox::Yes) {
-         backupName = QInputDialog::getText(this, "Backup name", "Optional backup name");
-
-    }
+     QString backupName = QInputDialog::getText(this, "Backup name", "Optional backup name");
 
     // Everything checks out, time to do the restore
     RestoreResult restoreResult = m_snapper->restoreSubvol(uuid, subvolId, targetId, backupName);
