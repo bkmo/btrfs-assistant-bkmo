@@ -92,7 +92,7 @@ void FileBrowser::on_pushButton_open_clicked()
     const QString filePath = m_fileModel->filePath(indexes.at(0));
 
     // Open file/directory using default application
-    QDesktopServices::openUrl(QUrl(filePath));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
 }
 
 void FileBrowser::on_pushButton_restore_clicked()
