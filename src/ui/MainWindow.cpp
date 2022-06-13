@@ -576,7 +576,7 @@ void MainWindow::setup()
     // Connect the subvolume view
     m_ui->tableView_subvols->setModel(m_subvolumeFilterModel);
     m_ui->toolButton_subvolRestoreBackup->hide();
-    connect(m_ui->tableView_subvols->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+    connect(m_ui->tableView_subvols->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
             SLOT(on_tableView_subvols_selectionChanged()));
     m_ui->tableView_subvols->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -1073,7 +1073,7 @@ void MainWindow::on_toolButton_subvolumeBrowse_clicked()
 
     auto fb = new FileBrowser(QDir::cleanPath(mountpoint + QDir::separator() + subvolPath), uuid, this);
     // Prefix the window title with target and snapshot number, so user can make sense of multiple windows
-    fb->setWindowTitle(QString("%1 - %2").arg(subvolPath).arg(fb->windowTitle()));
+    fb->setWindowTitle(QString("%1 - %2").arg(subvolPath, fb->windowTitle()));
     fb->setAttribute(Qt::WA_DeleteOnClose, true);
     fb->show();
 }
@@ -1230,7 +1230,7 @@ void MainWindow::on_toolButton_snapperBrowse_clicked()
 
     auto fb = new FileBrowser(m_snapper, QDir::cleanPath(mountpoint + QDir::separator() + subvolPath), uuid, this);
     // Prefix the window title with target and snapshot number, so user can make sense of multiple windows
-    fb->setWindowTitle(QString("%1:%2 - %3").arg(target).arg(snapshotNumber).arg(fb->windowTitle()));
+    fb->setWindowTitle(QString("%1:%2 - %3").arg(target, QVariant(snapshotNumber).toString(), fb->windowTitle()));
     fb->setAttribute(Qt::WA_DeleteOnClose, true);
     fb->show();
 }
