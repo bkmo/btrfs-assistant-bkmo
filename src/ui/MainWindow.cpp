@@ -575,6 +575,9 @@ void MainWindow::setup()
 
     // Connect the subvolume view
     m_ui->tableView_subvols->setModel(m_subvolumeFilterModel);
+    m_ui->toolButton_subvolRestoreBackup->hide();
+    connect(m_ui->tableView_subvols->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(on_tableView_subvols_selectionChanged()));
     m_ui->tableView_subvols->setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_ui->tableView_subvols->sortByColumn(SubvolumeModel::Column::Name, Qt::AscendingOrder);
@@ -964,24 +967,32 @@ void MainWindow::on_tableView_subvols_customContextMenuRequested(const QPoint &p
                 }
             }
         });
+
+        QAction *browseAction = menu.addAction(tr("Browse subvolume..."));
+        connect(browseAction, &QAction::triggered, this, [this, subvol]() { on_toolButton_subvolumeBrowse_clicked(); });
+
+        if (isSubvolumeBackup(subvol.subvolName)) {
+            QAction *browseAction = menu.addAction(tr("Restore backup..."));
+            connect(browseAction, &QAction::triggered, this, [this, subvol]() { on_toolButton_subvolRestoreBackup_clicked(); });
+        }
+
+        if (!writeableSubvols.isEmpty()) {
+            QAction *readOnlyAction = menu.addAction(tr("Set &read-only flag"));
+            connect(readOnlyAction, &QAction::triggered, this,
+                    [setReadOnlyFlag, writeableSubvols]() { setReadOnlyFlag(writeableSubvols, true); });
+        }
+
+        if (!readOnlySubvols.isEmpty()) {
+            QAction *writeableAction = menu.addAction(tr("&Clear read-only flag"));
+            connect(writeableAction, &QAction::triggered, this,
+                    [setReadOnlyFlag, readOnlySubvols]() { setReadOnlyFlag(readOnlySubvols, false); });
+        }
+
+        QAction *deleteAction = menu.addAction(tr("&Delete"));
+        connect(deleteAction, &QAction::triggered, this, &MainWindow::on_toolButton_subvolDelete_clicked);
+
+        menu.exec(m_ui->tableView_subvols->mapToGlobal(pos));
     }
-
-    if (!writeableSubvols.isEmpty()) {
-        QAction *readOnlyAction = menu.addAction(tr("Set &read-only flag"));
-        connect(readOnlyAction, &QAction::triggered, this,
-                [setReadOnlyFlag, writeableSubvols]() { setReadOnlyFlag(writeableSubvols, true); });
-    }
-
-    if (!readOnlySubvols.isEmpty()) {
-        QAction *writeableAction = menu.addAction(tr("&Clear read-only flag"));
-        connect(writeableAction, &QAction::triggered, this,
-                [setReadOnlyFlag, readOnlySubvols]() { setReadOnlyFlag(readOnlySubvols, false); });
-    }
-
-    QAction *deleteAction = menu.addAction(tr("&Delete"));
-    connect(deleteAction, &QAction::triggered, this, &MainWindow::on_toolButton_subvolDelete_clicked);
-
-    menu.exec(m_ui->tableView_subvols->mapToGlobal(pos));
 }
 
 void MainWindow::on_toolButton_bmApply_clicked()
@@ -1311,6 +1322,42 @@ void MainWindow::on_toolButton_snapperDelete_clicked()
     populateSnapperRestoreGrid();
 
     m_ui->toolButton_snapperDelete->clearFocus();
+}
+
+bool MainWindow::isSubvolumeBackup(QString subvolPath)
+{
+    static QRegularExpression re("_backup_[0-9]{17}");
+    const QStringList nameParts = subvolPath.split(re);
+
+    if (nameParts.count() != 2) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void MainWindow::on_tableView_subvols_selectionChanged()
+{
+    if (m_ui->tableView_subvols->selectionModel()->hasSelection()) {
+
+        QVector<Subvolume> selectedSubvolumes;
+        const QModelIndexList selectedIndexes = m_ui->tableView_subvols->selectionModel()->selectedRows(SubvolumeModel::Column::Name);
+
+        for (const QModelIndex &idx : selectedIndexes) {
+            QModelIndex sourceIdx = m_subvolumeFilterModel->mapToSource(idx);
+            const Subvolume &s = m_subvolumeModel->subvolume(sourceIdx.row());
+            selectedSubvolumes.append(s);
+        }
+
+        QString subvolPath = selectedSubvolumes.at(0).subvolName;
+
+        // Ensure it is a backup we created
+        if (isSubvolumeBackup(subvolPath)) {
+            m_ui->toolButton_subvolRestoreBackup->show();
+        } else {
+            m_ui->toolButton_subvolRestoreBackup->hide();
+        }
+    }
 }
 
 void MainWindow::on_tabWidget_mainWindow_currentChanged()

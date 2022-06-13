@@ -172,7 +172,15 @@ class MainWindow : public QMainWindow {
      */
     void setEnableQuotaButtonStatus();
 
+    bool isSubvolumeBackup(QString subvolPath);
+
   private slots:
+
+    /**
+     * @brief Subvolumes table row selection handler.
+     */
+    void on_tableView_subvols_selectionChanged();
+    //    void on_tableView_subvols_selectionChanged(QItemSelection &, QItemSelection &);
 
     /**
      * @brief Toggle balance list selection depending on checkbox state.
