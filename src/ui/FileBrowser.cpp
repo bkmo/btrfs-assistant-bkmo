@@ -31,6 +31,9 @@ void FileBrowser::intializeFileBrowser(const QString &rootPath)
     m_treeView->setRootIndex(m_fileModel->index(rootPath));
     m_treeView->hideColumn(TypeColumn);
     m_treeView->sortByColumn(0, Qt::AscendingOrder);
+
+    // Hide the open button until rootless
+    m_ui->pushButton_open->hide();
 }
 
 FileBrowser::FileBrowser(Snapper *snapper, const QString &rootPath, const QString &uuid, QWidget *parent)
