@@ -576,8 +576,8 @@ void MainWindow::setup()
     // Connect the subvolume view
     m_ui->tableView_subvols->setModel(m_subvolumeFilterModel);
     m_ui->toolButton_subvolRestoreBackup->hide();
-    connect(m_ui->tableView_subvols->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
-            SLOT(on_tableView_subvols_selectionChanged()));
+    connect(m_ui->tableView_subvols->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
+            SLOT(subvolsSelectionChanged()));
     m_ui->tableView_subvols->setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_ui->tableView_subvols->sortByColumn(SubvolumeModel::Column::Name, Qt::AscendingOrder);
@@ -971,7 +971,7 @@ void MainWindow::on_tableView_subvols_customContextMenuRequested(const QPoint &p
         QAction *browseAction = menu.addAction(tr("Browse subvolume..."));
         connect(browseAction, &QAction::triggered, this, [this, subvol]() { on_toolButton_subvolumeBrowse_clicked(); });
 
-        if (isSubvolumeBackup(subvol.subvolName)) {
+        if (m_btrfs->isSubvolumeBackup(subvol.subvolName)) {
             QAction *browseAction = menu.addAction(tr("Restore backup..."));
             connect(browseAction, &QAction::triggered, this, [this, subvol]() { on_toolButton_subvolRestoreBackup_clicked(); });
         }
@@ -1230,7 +1230,7 @@ void MainWindow::on_toolButton_snapperBrowse_clicked()
 
     auto fb = new FileBrowser(m_snapper, QDir::cleanPath(mountpoint + QDir::separator() + subvolPath), uuid, this);
     // Prefix the window title with target and snapshot number, so user can make sense of multiple windows
-    fb->setWindowTitle(QString("%1:%2 - %3").arg(target, QVariant(snapshotNumber).toString(), fb->windowTitle()));
+    fb->setWindowTitle(QString("%1:%2 - %3").arg(target, QString::number(snapshotNumber), fb->windowTitle()));
     fb->setAttribute(Qt::WA_DeleteOnClose, true);
     fb->show();
 }
@@ -1324,38 +1324,25 @@ void MainWindow::on_toolButton_snapperDelete_clicked()
     m_ui->toolButton_snapperDelete->clearFocus();
 }
 
-bool MainWindow::isSubvolumeBackup(QString subvolPath)
-{
-    static QRegularExpression re("_backup_[0-9]{17}");
-    const QStringList nameParts = subvolPath.split(re);
-
-    if (nameParts.count() != 2) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-void MainWindow::on_tableView_subvols_selectionChanged()
+void MainWindow::subvolsSelectionChanged()
 {
     if (m_ui->tableView_subvols->selectionModel()->hasSelection()) {
 
-        QVector<Subvolume> selectedSubvolumes;
         const QModelIndexList selectedIndexes = m_ui->tableView_subvols->selectionModel()->selectedRows(SubvolumeModel::Column::Name);
 
-        for (const QModelIndex &idx : selectedIndexes) {
-            QModelIndex sourceIdx = m_subvolumeFilterModel->mapToSource(idx);
-            const Subvolume &s = m_subvolumeModel->subvolume(sourceIdx.row());
-            selectedSubvolumes.append(s);
-        }
-
-        QString subvolPath = selectedSubvolumes.at(0).subvolName;
-
-        // Ensure it is a backup we created
-        if (isSubvolumeBackup(subvolPath)) {
-            m_ui->toolButton_subvolRestoreBackup->show();
+        if (selectedIndexes.length() > 1) {
+            m_ui->toolButton_subvolumeBrowse->hide();
         } else {
-            m_ui->toolButton_subvolRestoreBackup->hide();
+            m_ui->toolButton_subvolumeBrowse->show();
+
+            QString subvolPath = m_subvolumeModel->subvolume(m_subvolumeFilterModel->mapToSource(selectedIndexes.at(0)).row()).subvolName;
+
+            // Ensure it is a backup we created
+            if (m_btrfs->isSubvolumeBackup(subvolPath)) {
+                m_ui->toolButton_subvolRestoreBackup->show();
+            } else {
+                m_ui->toolButton_subvolRestoreBackup->hide();
+            }
         }
     }
 }

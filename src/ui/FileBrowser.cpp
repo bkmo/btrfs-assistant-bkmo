@@ -31,9 +31,6 @@ void FileBrowser::intializeFileBrowser(const QString &rootPath)
     m_treeView->setRootIndex(m_fileModel->index(rootPath));
     m_treeView->hideColumn(TypeColumn);
     m_treeView->sortByColumn(0, Qt::AscendingOrder);
-
-    // Hide the open button until rootless
-    m_ui->pushButton_open->hide();
 }
 
 FileBrowser::FileBrowser(Snapper *snapper, const QString &rootPath, const QString &uuid, QWidget *parent)
@@ -81,21 +78,6 @@ void FileBrowser::on_pushButton_diff_clicked()
     // Create DiffViewer dialog
     DiffViewer df(m_snapper, m_rootPath, filePath, m_uuid);
     df.exec();
-}
-
-void FileBrowser::on_pushButton_open_clicked()
-{
-    // Get the selected row and ensure it isn't empty
-    QModelIndexList indexes = m_treeView->selectionModel()->selectedIndexes();
-    if (indexes.count() == 0) {
-        return;
-    }
-
-    // Grad the path of the selected file/directory
-    const QString filePath = m_fileModel->filePath(indexes.at(0));
-
-    // Open file/directory using default application
-    QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
 }
 
 void FileBrowser::on_pushButton_restore_clicked()
