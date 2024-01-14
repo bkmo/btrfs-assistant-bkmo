@@ -319,6 +319,12 @@ void Btrfs::loadVolumes()
                     btrfs.sysUsed = cols.at(3).split(' ').at(0).trimmed().toULong();
                 }
             }
+            Result labelCommand = System::runCmd("LANG=C ; btrfs filesystem label /dev/disk/by-uuid/" + uuid, false);
+            if (!labelCommand.exitCode && !labelCommand.output.isEmpty()) {
+                btrfs.label = labelCommand.output;
+            } else if (!labelCommand.exitCode && labelCommand.output.isEmpty()) {
+                btrfs.label = "[no label]";
+            }
             m_filesystems[uuid] = btrfs;
             loadSubvols(uuid);
         }

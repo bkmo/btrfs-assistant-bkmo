@@ -61,6 +61,7 @@ struct BtrfsFilesystem {
     uint64_t metaUsed = 0;
     uint64_t sysSize = 0;
     uint64_t sysUsed = 0;
+    QString label = "[unknown label]";
     SubvolumeMap subvolumes;
 };
 
