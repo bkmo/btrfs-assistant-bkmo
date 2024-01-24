@@ -140,7 +140,8 @@ void MainWindow::bmRefreshMountpoints()
 
 void MainWindow::btrfsBalanceStatusUpdateUI()
 {
-    QString balanceStatus = m_btrfs->balanceStatus(Btrfs::findAnyMountpoint(getCurrentDeviceUuid()));
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
+    QString balanceStatus = m_btrfs->balanceStatus(Btrfs::findAnyMountpoint(uuid));
 
     // if balance is running currently, make sure you can stop it and we monitor progress
     if (!balanceStatus.contains("No balance found")) {
@@ -161,7 +162,8 @@ void MainWindow::btrfsBalanceStatusUpdateUI()
 
 void MainWindow::btrfsScrubStatusUpdateUI()
 {
-    QString scrubStatus = m_btrfs->scrubStatus(Btrfs::findAnyMountpoint(getCurrentDeviceUuid()));
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
+    QString scrubStatus = m_btrfs->scrubStatus(Btrfs::findAnyMountpoint(uuid));
 
     // update status to current scrub operation status
     m_ui->label_btrfsScrubStatus->setText(scrubStatus);
@@ -273,14 +275,6 @@ void MainWindow::populateBmTab()
         m_ui->listWidget_bmDefrag->setDisabled(false);
         setListWidgetSelections(defragMounts, m_ui->listWidget_bmDefrag);
     }
-}
-
-QString MainWindow::getCurrentDeviceUuid()
-{
-    if (m_ui->comboBox_btrfsDevice->currentIndex() == -1) {
-        return "";
-    }
-    return m_ui->comboBox_btrfsDevice->currentData().toString();
 }
 
 void MainWindow::populateBtrfsUi(const QString &uuid)
@@ -467,7 +461,7 @@ void MainWindow::refreshBtrfsUi()
     }
 
     // Repopulate data using the first detected btrfs filesystem.
-    populateBtrfsUi(getCurrentDeviceUuid());
+    populateBtrfsUi(m_ui->comboBox_btrfsDevice->currentData().toString());
     refreshSubvolListUi();
 }
 
@@ -679,7 +673,7 @@ void MainWindow::on_comboBox_btrfsDevice_activated(int index)
 {
     Q_UNUSED(index);
 
-    QString uuid = getCurrentDeviceUuid();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
     if (!uuid.isEmpty()) {
         populateBtrfsUi(uuid);
         refreshSubvolListUi();
@@ -714,7 +708,7 @@ void MainWindow::on_comboBox_snapperSubvols_activated(int index)
 
 void MainWindow::on_pushButton_btrfsBalance_clicked()
 {
-    QString uuid = getCurrentDeviceUuid();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
 
     // Stop or start balance depending on current operation
     if (m_ui->pushButton_btrfsBalance->text().contains("Stop")) {
@@ -737,7 +731,7 @@ void MainWindow::on_pushButton_btrfsRefreshData_clicked()
 
 void MainWindow::on_pushButton_btrfsScrub_clicked()
 {
-    QString uuid = getCurrentDeviceUuid();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
 
     // Stop or start scrub depending on current operation
     if (m_ui->pushButton_btrfsScrub->text().contains("Stop")) {
@@ -751,7 +745,7 @@ void MainWindow::on_pushButton_btrfsScrub_clicked()
 
 void MainWindow::on_pushButton_enableQuota_clicked()
 {
-    QString uuid = getCurrentDeviceUuid();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
     if (uuid.isEmpty()) {
         return;
     }
@@ -1567,11 +1561,10 @@ void MainWindow::setCleanup(const QString &cleanupArg)
 
 void MainWindow::setEnableQuotaButtonStatus()
 {
-    QString uuid = getCurrentDeviceUuid();
-    if (uuid.isEmpty()) {
+    if (m_ui->comboBox_btrfsDevice->currentData().toString().isEmpty()) {
         return;
     }
-    const QString mountpoint = Btrfs::findAnyMountpoint(uuid);
+    const QString mountpoint = Btrfs::findAnyMountpoint(m_ui->comboBox_btrfsDevice->currentData().toString());
 
     if (!mountpoint.isEmpty() && m_btrfs->isQuotaEnabled(mountpoint)) {
         m_ui->pushButton_enableQuota->setText(tr("Disable Btrfs Quotas"));

@@ -185,6 +185,23 @@ QStringList Btrfs::listFilesystems()
     return uuids;
 }
 
+QList<QPair<QString, QString>> Btrfs::listFilesystemsAndLabels()
+{
+    const QStringList outputList = System::runCmd("btrfs filesystem show -m", false).output.split('\n');
+    QList<QPair<QString, QString>> filesystems;
+    for (const QString &line : outputList) {
+        QRegularExpression re("Label: \'(.*)\'  uuid: ([0-9a-f-]+)");
+        auto match = re.match(line);
+        if (match.hasMatch()) {
+            filesystems.append({match.captured(2), match.captured(1)});
+        } else if (line.contains("uuid:")) {
+            // If the filesystem has no label, it will display as "Label: none" which is not matched by the regex
+            filesystems.append({line.split("uuid:").at(1).trimmed(), "[no label]"});
+        }
+    }
+    return filesystems;
+}
+
 QStringList Btrfs::listMountpoints()
 {
     QStringList mountpoints;
@@ -288,14 +305,18 @@ void Btrfs::loadSubvols(const QString &uuid)
 
 void Btrfs::loadVolumes()
 {
-    QStringList uuidList = listFilesystems();
+    auto fsList = listFilesystemsAndLabels();
 
     // Loop through btrfs devices and retrieve filesystem usage
-    for (const QString &uuid : qAsConst(uuidList)) {
+    for (const auto &fs : qAsConst(fsList)) {
+        const auto &uuid = fs.first;
+        const auto &label = fs.second;
+
         QString mountpoint = findAnyMountpoint(uuid);
         if (!mountpoint.isEmpty()) {
             BtrfsFilesystem btrfs;
             btrfs.isPopulated = true;
+            btrfs.label = label;
             QStringList usageLines = System::runCmd("LANG=C ; btrfs fi usage -b \"" + mountpoint + "\"", false).output.split('\n');
             for (const QString &line : qAsConst(usageLines)) {
                 const QStringList &cols = line.split(':');
@@ -318,12 +339,6 @@ void Btrfs::loadVolumes()
                     btrfs.sysSize = cols.at(2).split(',').at(0).trimmed().toULong();
                     btrfs.sysUsed = cols.at(3).split(' ').at(0).trimmed().toULong();
                 }
-            }
-            Result labelCommand = System::runCmd("LANG=C ; btrfs filesystem label /dev/disk/by-uuid/" + uuid, false);
-            if (!labelCommand.exitCode && !labelCommand.output.isEmpty()) {
-                btrfs.label = labelCommand.output;
-            } else if (!labelCommand.exitCode && labelCommand.output.isEmpty()) {
-                btrfs.label = "[no label]";
             }
             m_filesystems[uuid] = btrfs;
             loadSubvols(uuid);

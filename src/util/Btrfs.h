@@ -173,6 +173,10 @@ class Btrfs : public QObject {
      */
     static QStringList listFilesystems();
 
+    /** @brief Returns a QList of {UUID, label} pairs for BTRFS filesystems
+     */
+    static QList<QPair<QString, QString>> listFilesystemsAndLabels();
+
     /** @brief Returns a mountpoints for each Btrfs subvolume
      *
      *  Finds all mountpoints for each Btrfs subvolume and returns a sorted QStringList
