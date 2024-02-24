@@ -1,7 +1,6 @@
 #ifndef CLI_H
 #define CLI_H
 
-#include "util/System.h"
 #include "util/Snapper.h"
 #include "util/Btrfs.h"
 
@@ -21,7 +20,7 @@ public:
      * @return
      */
     static int listSnapshots(Snapper *snapper);
-    static int restore(Btrfs *btrfs, Snapper *snapper, const QString &restoreTarget);
+    static int restore(Btrfs *btrfs, Snapper *snapper, const int index);
 
 private:
     explicit Cli(QObject *parent = nullptr);

@@ -2,11 +2,11 @@
 #include "ui/MainWindow.h"
 #include "util/BtrfsMaintenance.h"
 #include "util/Settings.h"
+#include "util/System.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QTranslator>
 
@@ -16,13 +16,14 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/icons/btrfs-assistant.svg"));
 
     QTranslator translator;
-    translator.load("btrfsassistant_" + QLocale::system().name(), "/usr/share/btrfs-assistant/translations");
+    if (!translator.load("btrfsassistant_" + QLocale::system().name(), "/usr/share/btrfs-assistant/translations")) {
+        QTextStream(stdout) << QCoreApplication::translate("main", "Warning: Failed to load translations") << Qt::endl;
+        ;
+    }
     app.installTranslator(&translator);
 
     QCoreApplication::setApplicationName(QCoreApplication::translate("main", "Btrfs Assistant"));
     QCoreApplication::setApplicationVersion("1.9");
-    // Disable question mark title bar buttons in QDialogs ("What's this?" help buttons)
-    QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 
     QCommandLineParser parser;
     parser.setApplicationDescription(QCoreApplication::translate("main", "An application for managing Btrfs and Snapper"));
@@ -36,8 +37,8 @@ int main(int argc, char *argv[])
 
     QCommandLineOption restoreOption(QStringList() << "r"
                                                    << "restore",
-                                     QCoreApplication::translate("main", "Restore the given subvolume/UUID"),
-                                     QCoreApplication::translate("main", "subvolume,UUID"));
+                                     QCoreApplication::translate("main", "Restore the given snapshot"),
+                                     QCoreApplication::translate("main", "index of snapshot"));
     parser.addOption(restoreOption);
     parser.process(app);
 
@@ -62,7 +63,7 @@ int main(int argc, char *argv[])
     if (parser.isSet(listOption) && snapper != nullptr) {
         return Cli::listSnapshots(snapper);
     } else if (parser.isSet(restoreOption) && snapper != nullptr) {
-        return Cli::restore(&btrfs, snapper, parser.value(restoreOption));
+        return Cli::restore(&btrfs, snapper, parser.value(restoreOption).toInt());
     } else {
         // If Btrfs Maintenance is installed, instantiate the btrfsMaintenance object
         std::unique_ptr<BtrfsMaintenance> btrfsMaintenance;

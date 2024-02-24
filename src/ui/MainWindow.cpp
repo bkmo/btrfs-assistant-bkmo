@@ -295,10 +295,12 @@ void MainWindow::populateBtrfsUi(const QString &uuid)
     m_ui->progressBar_btrfssys->setValue(static_cast<int>((double)filesystem.sysUsed / (double)filesystem.sysSize * 100));
 
     // The information section
-    m_ui->label_btrfsAllocatedValue->setText(System::toHumanReadable(filesystem.allocatedSize));
-    m_ui->label_btrfsUsedValue->setText(System::toHumanReadable(filesystem.usedSize));
+    const auto allocatedPercent = static_cast<double>(filesystem.allocatedSize) / static_cast<double>(filesystem.totalSize) * 100.0;
+    m_ui->label_btrfsAllocatedValue->setText(
+        QString("%1 (%2%)").arg(System::toHumanReadable(filesystem.allocatedSize)).arg(allocatedPercent, 0, 'f', 2));
+    const auto usagePercent = static_cast<double>(filesystem.usedSize) / static_cast<double>(filesystem.totalSize) * 100.0;
+    m_ui->label_btrfsUsedValue->setText(QString("%1 (%2%)").arg(System::toHumanReadable(filesystem.usedSize)).arg(usagePercent, 0, 'f', 2));
     m_ui->label_btrfsSizeValue->setText(System::toHumanReadable(filesystem.totalSize));
-    m_ui->label_btrfsFreeValue->setText(System::toHumanReadable(filesystem.freeSize));
     double freePercent = (double)filesystem.allocatedSize / (double)filesystem.totalSize;
     if (freePercent < 0.70) {
         m_ui->label_btrfsMessage->setText(tr("You have lots of free space, did you overbuy?"));
@@ -307,6 +309,8 @@ void MainWindow::populateBtrfsUi(const QString &uuid)
     } else {
         m_ui->label_btrfsMessage->setText(tr("Your disk space is well utilized"));
     }
+    m_ui->label_btrfsFreeValue->setText(
+        QString("%1 (%2%)").arg(System::toHumanReadable(filesystem.freeSize)).arg((1.0 - freePercent) * 100.0, 0, 'f', 2));
 
     // filesystems operation section
     btrfsBalanceStatusUpdateUI();
@@ -369,7 +373,7 @@ void MainWindow::populateSnapperGrid()
     }
 
     // Populate the table
-    m_ui->tableWidget_snapperNew->setRowCount(snapshots.size());
+    m_ui->tableWidget_snapperNew->setRowCount(static_cast<int>(snapshots.size()));
     for (int i = 0; i < snapshots.size(); i++) {
         // Ensure proper sorting of numbers and dates
         QTableWidgetItem *number = new QTableWidgetItem(static_cast<int>(snapshots.at(i).number));
@@ -421,7 +425,7 @@ void MainWindow::populateSnapperRestoreGrid()
     }
 
     // Populate the table
-    m_ui->tableWidget_snapperRestore->setRowCount(subvols.count());
+    m_ui->tableWidget_snapperRestore->setRowCount(static_cast<int>(subvols.count()));
     for (int i = 0; i < subvols.count(); i++) {
         const SnapperSubvolume &subvolume = subvols.at(i);
         // Ensure proper sorting of numbers and dates
@@ -1031,7 +1035,7 @@ void MainWindow::on_tableWidget_snapperNew_customContextMenuRequested(const QPoi
     connect(action, &QAction::triggered, this, &MainWindow::on_toolButton_snapperDelete_clicked);
 
     action = menu.addAction(tr("&Change description"));
-    connect(action, &QAction::triggered, this, &MainWindow::on_toolButton_snapperChangeDescription_clicked);
+    connect(action, &QAction::triggered, this, &MainWindow::snapperChangeDescription);
 
     menu.exec(m_ui->tableView_subvols->mapToGlobal(pos));
 }
@@ -1195,7 +1199,7 @@ void MainWindow::on_toolButton_subvolDelete_clicked()
     }
 
     // Reload data and refresh the UI
-    for (const auto &uuid : qAsConst(uuids)) {
+    for (const auto &uuid : std::as_const(uuids)) {
         m_btrfs->loadSubvols(uuid);
     }
     m_subvolumeModel->load(m_btrfs->filesystems());
@@ -1340,7 +1344,7 @@ void MainWindow::on_toolButton_snapperDelete_clicked()
     QString config = m_ui->comboBox_snapperConfigs->currentText();
 
     // Delete each selected snapshot
-    for (const QString &number : qAsConst(numbers)) {
+    for (const QString &number : std::as_const(numbers)) {
         // This shouldn't be possible but we check anyway
         if (config.isEmpty() || number.isEmpty()) {
             displayError(tr("Cannot delete snapshot"));
@@ -1365,7 +1369,7 @@ void MainWindow::on_toolButton_snapperDelete_clicked()
     m_ui->toolButton_snapperDelete->clearFocus();
 }
 
-void MainWindow::on_toolButton_snapperChangeDescription_clicked()
+void MainWindow::snapperChangeDescription()
 {
     // Get all the rows that were selected
     const QList<QTableWidgetItem *> list = m_ui->tableWidget_snapperNew->selectedItems();
@@ -1382,7 +1386,7 @@ void MainWindow::on_toolButton_snapperChangeDescription_clicked()
         numbers.insert(m_ui->tableWidget_snapperNew->item(item->row(), 0)->text());
     }
 
-    const int snapshotsCount = numbers.count();
+    const int snapshotsCount = static_cast<int>(numbers.count());
     QString config = m_ui->comboBox_snapperConfigs->currentText();
 
     QString currentDescription = "";
@@ -1404,7 +1408,7 @@ void MainWindow::on_toolButton_snapperChangeDescription_clicked()
     }
 
     // Change the description of each selected snapshot
-    for (const QString &number : qAsConst(numbers)) {
+    for (const QString &number : std::as_const(numbers)) {
         // This shouldn't be possible but we check anyway
         if (config.isEmpty() || number.isEmpty()) {
             displayError(tr("Cannot change description of snapshot"));
@@ -1545,7 +1549,7 @@ void MainWindow::setCleanup(const QString &cleanupArg)
 
     const QString config = m_ui->comboBox_snapperConfigs->currentText();
 
-    for (const uint &number : qAsConst(numbers)) {
+    for (const uint &number : std::as_const(numbers)) {
         SnapperResult sr = m_snapper->setCleanupAlgorithm(config, number, cleanupArg);
         if (sr.exitCode != 0) {
             displayError(tr("Failed to set cleanup algorithm for snapshot %1").arg(number));

@@ -1,5 +1,12 @@
 ### Btrfs Assistant
 
+2.0 - TBD
+* Ported to Qt 6
+* Added percentage value display for filesystem utilization(Contributed by Nikolas Koesling)
+* CLI snapshots are now restored via an index to make the process more user friendly
+* Changed timestamp on subvol backups to UTC and ISO format
+
+
 1.9 - 2024-01-14
 * Improve CSV parsing(Contributed by HoroTW)
 * Added the ability to modify Snapper snapshot descriptions(Contributed by HoroTW)
