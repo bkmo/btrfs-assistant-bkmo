@@ -749,7 +749,7 @@ void MainWindow::on_pushButton_btrfsScrub_clicked()
 
 void MainWindow::on_pushButton_enableQuota_clicked()
 {
-    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
+    const QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
     if (uuid.isEmpty()) {
         return;
     }

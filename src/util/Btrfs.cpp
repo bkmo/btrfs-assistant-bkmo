@@ -189,13 +189,17 @@ QList<QPair<QString, QString>> Btrfs::listFilesystemsAndLabels()
     const QStringList outputList = System::runCmd("btrfs filesystem show -m", false).output.split('\n');
     QList<QPair<QString, QString>> filesystems;
     for (const QString &line : outputList) {
-        QRegularExpression re("Label: \'(.*)\'  uuid: ([0-9a-f-]+)");
+        QRegularExpression re("Label: (.*)  uuid: ([0-9a-f-]+)");
         auto match = re.match(line);
+
         if (match.hasMatch()) {
-            filesystems.append({match.captured(2), match.captured(1)});
-        } else if (line.contains("uuid:")) {
-            // If the filesystem has no label, it will display as "Label: none" which is not matched by the regex
-            filesystems.append({line.split("uuid:").at(1).trimmed(), "[no label]"});
+            // The label will be printed as either `none` or `'some label'`
+            auto label_match = match.captured(1);
+            if (label_match == "none") {
+                filesystems.append({line.split("uuid:").at(1).trimmed(), "[no label]"});
+            } else {
+                filesystems.append({match.captured(2), label_match.sliced(1, label_match.size() - 2)});
+            }
         }
     }
     return filesystems;

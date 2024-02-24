@@ -77,11 +77,6 @@ class MainWindow : public QMainWindow {
     void populateBmTab();
 
     /**
-     * @brief Get the currently selected device's UUID, or the empty string if there is no device
-     */
-    QString getCurrentDeviceUuid();
-
-    /**
      * @brief Populate the Btrfs tab with the selected device's information.
      * @param uuid
      */
