@@ -63,6 +63,7 @@ struct BtrfsFilesystem {
     uint64_t metaUsed = 0;
     uint64_t sysSize = 0;
     uint64_t sysUsed = 0;
+    QString label = "[unknown label]";
     SubvolumeMap subvolumes;
 };
 
@@ -174,6 +175,10 @@ class Btrfs : public QObject {
     /** @brief Returns a QStringList of UUIDs containing Btrfs filesystems
      */
     static QStringList listFilesystems();
+
+    /** @brief Returns a QList of {UUID, label} pairs for BTRFS filesystems
+     */
+    static QList<QPair<QString, QString>> listFilesystemsAndLabels();
 
     /** @brief Returns a mountpoints for each Btrfs subvolume
      *

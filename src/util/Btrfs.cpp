@@ -187,6 +187,27 @@ QStringList Btrfs::listFilesystems()
     return uuids;
 }
 
+QList<QPair<QString, QString>> Btrfs::listFilesystemsAndLabels()
+{
+    const QStringList outputList = System::runCmd("btrfs filesystem show -m", false).output.split('\n');
+    QList<QPair<QString, QString>> filesystems;
+    for (const QString &line : outputList) {
+        QRegularExpression re("Label: (.*)  uuid: ([0-9a-f-]+)");
+        auto match = re.match(line);
+
+        if (match.hasMatch()) {
+            // The label will be printed as either `none` or `'some label'`
+            auto label_match = match.captured(1);
+            if (label_match == "none") {
+                filesystems.append({line.split("uuid:").at(1).trimmed(), "[no label]"});
+            } else {
+                filesystems.append({match.captured(2), label_match.sliced(1, label_match.size() - 2)});
+            }
+        }
+    }
+    return filesystems;
+}
+
 QStringList Btrfs::listMountpoints()
 {
     QStringList mountpoints;
@@ -290,16 +311,20 @@ void Btrfs::loadSubvols(const QString &uuid)
 
 void Btrfs::loadVolumes()
 {
-    QStringList uuidList = listFilesystems();
+    auto fsList = listFilesystemsAndLabels();
 
     static QRegularExpression qReg("\\s+");
 
     // Loop through btrfs devices and retrieve filesystem usage
-    for (const QString &uuid : std::as_const(uuidList)) {
+    for (const auto &fs : std::as_const(fsList)) {
+        const auto &uuid = fs.first;
+        const auto &label = fs.second;
+
         QString mountpoint = findAnyMountpoint(uuid);
         if (!mountpoint.isEmpty()) {
             BtrfsFilesystem btrfs;
             btrfs.isPopulated = true;
+            btrfs.label = label;
             QStringList usageLines = System::runCmd("LANG=C ; btrfs fi usage -b \"" + mountpoint + "\"", false).output.split('\n');
             for (const QString &line : std::as_const(usageLines)) {
                 const QStringList &cols = line.split(':');

@@ -140,7 +140,7 @@ void MainWindow::bmRefreshMountpoints()
 
 void MainWindow::btrfsBalanceStatusUpdateUI()
 {
-    QString uuid = m_ui->comboBox_btrfsDevice->currentText();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
     QString balanceStatus = m_btrfs->balanceStatus(Btrfs::findAnyMountpoint(uuid));
 
     // if balance is running currently, make sure you can stop it and we monitor progress
@@ -162,7 +162,7 @@ void MainWindow::btrfsBalanceStatusUpdateUI()
 
 void MainWindow::btrfsScrubStatusUpdateUI()
 {
-    QString uuid = m_ui->comboBox_btrfsDevice->currentText();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
     QString scrubStatus = m_btrfs->scrubStatus(Btrfs::findAnyMountpoint(uuid));
 
     // update status to current scrub operation status
@@ -461,13 +461,14 @@ void MainWindow::refreshBtrfsUi()
     // Repopulate device selection combo box with detected btrfs filesystems.
     const QStringList uuidList = Btrfs::listFilesystems();
     for (const QString &uuid : uuidList) {
-        if (m_ui->comboBox_btrfsDevice->findText(uuid) == -1) {
-            m_ui->comboBox_btrfsDevice->addItem(uuid);
+        if (m_ui->comboBox_btrfsDevice->findData(uuid) == -1) {
+            const BtrfsFilesystem &filesystem = m_btrfs->filesystem(uuid);
+            m_ui->comboBox_btrfsDevice->addItem(filesystem.label + " (" + uuid + ")", uuid);
         }
     }
 
     // Repopulate data using the first detected btrfs filesystem.
-    populateBtrfsUi(m_ui->comboBox_btrfsDevice->currentText());
+    populateBtrfsUi(m_ui->comboBox_btrfsDevice->currentData().toString());
     refreshSubvolListUi();
 }
 
@@ -679,7 +680,7 @@ void MainWindow::on_comboBox_btrfsDevice_activated(int index)
 {
     Q_UNUSED(index);
 
-    QString uuid = m_ui->comboBox_btrfsDevice->currentText();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
     if (!uuid.isEmpty()) {
         populateBtrfsUi(uuid);
         refreshSubvolListUi();
@@ -714,7 +715,7 @@ void MainWindow::on_comboBox_snapperSubvols_activated(int index)
 
 void MainWindow::on_pushButton_btrfsBalance_clicked()
 {
-    QString uuid = m_ui->comboBox_btrfsDevice->currentText();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
 
     // Stop or start balance depending on current operation
     if (m_ui->pushButton_btrfsBalance->text().contains("Stop")) {
@@ -737,7 +738,7 @@ void MainWindow::on_pushButton_btrfsRefreshData_clicked()
 
 void MainWindow::on_pushButton_btrfsScrub_clicked()
 {
-    QString uuid = m_ui->comboBox_btrfsDevice->currentText();
+    QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
 
     // Stop or start scrub depending on current operation
     if (m_ui->pushButton_btrfsScrub->text().contains("Stop")) {
@@ -751,10 +752,11 @@ void MainWindow::on_pushButton_btrfsScrub_clicked()
 
 void MainWindow::on_pushButton_enableQuota_clicked()
 {
-    if (m_ui->comboBox_btrfsDevice->currentText().isEmpty()) {
+    const QString uuid = m_ui->comboBox_btrfsDevice->currentData().toString();
+    if (uuid.isEmpty()) {
         return;
     }
-    const QString mountpoint = Btrfs::findAnyMountpoint(m_ui->comboBox_btrfsDevice->currentText());
+    const QString mountpoint = Btrfs::findAnyMountpoint(uuid);
 
     if (!mountpoint.isEmpty() && m_btrfs->isQuotaEnabled(mountpoint)) {
         Btrfs::setQgroupEnabled(mountpoint, false);
@@ -1567,10 +1569,10 @@ void MainWindow::setCleanup(const QString &cleanupArg)
 
 void MainWindow::setEnableQuotaButtonStatus()
 {
-    if (m_ui->comboBox_btrfsDevice->currentText().isEmpty()) {
+    if (m_ui->comboBox_btrfsDevice->currentData().toString().isEmpty()) {
         return;
     }
-    const QString mountpoint = Btrfs::findAnyMountpoint(m_ui->comboBox_btrfsDevice->currentText());
+    const QString mountpoint = Btrfs::findAnyMountpoint(m_ui->comboBox_btrfsDevice->currentData().toString());
 
     if (!mountpoint.isEmpty() && m_btrfs->isQuotaEnabled(mountpoint)) {
         m_ui->pushButton_enableQuota->setText(tr("Disable Btrfs Quotas"));
